@@ -36,8 +36,11 @@ const Login = () => {
       
       if (response.success && response.data) {
         console.log('Login realizado com sucesso:', response.data);
+        
         // Usar o contexto de autenticação
-        login(response.data.user, response.data.token);
+        const expiresAt = response.data.expiresAt ? new Date(response.data.expiresAt) : undefined;
+        login(response.data.user, response.data.token, expiresAt);
+        
         // Redirecionar para a página principal
         navigate('/');
       } else {
