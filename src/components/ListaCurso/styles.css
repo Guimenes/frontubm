@@ -1,0 +1,77 @@
+.lista-curso-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lista-curso-loader,
+.lista-curso-erro,
+.lista-curso-vazio {
+  padding: 16px;
+  border: 1px dashed var(--border-color, #e5e7eb);
+  border-radius: 12px;
+  color: var(--text-muted, #6b7280);
+}
+
+.grid-cursos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.curso-card {
+  background: var(--card-bg, #fff);
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.curso-card-header { display: flex; gap: 12px; align-items: center; }
+.curso-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: var(--primary-weak, rgba(139, 21, 56, 0.1));
+  color: var(--primary-color, #8b1538);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+}
+.curso-titles h4 {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.1rem;
+  color: var(--text-color, #111827);
+}
+.curso-cod { color: var(--text-muted, #6b7280); font-size: 0.85rem; }
+
+.curso-actions { display: flex; justify-content: flex-end; gap: 8px; }
+.btn-icon {
+  border: 1px solid var(--border-color, #e5e7eb);
+  background: #fff;
+  border-radius: 8px;
+  padding: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-icon:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-danger { 
+  color: var(--danger-color, #dc2626); 
+  border-color: var(--danger-color, #dc2626);
+}
+
+.btn-danger:hover {
+  background: var(--danger-color, #dc2626);
+  color: white;
+}
+
+.paginacao { display: flex; gap: 10px; align-items: center; justify-content: center; margin-top: 4px; }
+.paginacao .btn { background: var(--muted-bg, #f3f4f6); }

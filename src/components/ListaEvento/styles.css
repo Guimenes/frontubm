@@ -1,0 +1,351 @@
+.lista-eventos {
+  width: 100%;
+}
+
+.lista-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.lista-header h3 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  color: var(--text-dark);
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.total-items {
+  background: var(--background-gray);
+  color: var(--primary-color);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: 1px solid var(--border-color);
+}
+
+.lista-loading,
+.lista-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  text-align: center;
+  color: var(--text-light);
+}
+
+.lista-loading p,
+.lista-empty p {
+  margin-top: 16px;
+  font-size: 1.1rem;
+}
+
+.lista-empty h3 {
+  margin: 16px 0 8px;
+  color: var(--text-dark);
+}
+
+.eventos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.evento-card {
+  background: var(--background-light);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 1px solid var(--border-color);
+}
+
+.evento-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.evento-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: var(--background-gray);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.evento-codigo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: var(--text-dark);
+  font-family: 'Courier New', monospace;
+  background: var(--background-light);
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+}
+
+.evento-tipo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: white;
+}
+
+.palestra-principal {
+  background: var(--warning-color);
+}
+
+.apresentacao-trabalhos {
+  background: var(--info-color);
+}
+
+.oficina {
+  background: var(--success-color);
+}
+
+.banner {
+  background: #9c27b0;
+}
+
+.evento-content {
+  padding: 20px;
+}
+
+.evento-tema {
+  margin: 0 0 16px 0;
+  color: var(--text-dark);
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.evento-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.info-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: var(--text-light);
+}
+
+.info-item .material-icon {
+  color: var(--primary-color);
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.info-item strong {
+  color: var(--text-dark);
+}
+
+.evento-resumo {
+  margin-top: 16px;
+  padding: 16px;
+  background: var(--background-gray);
+  border-radius: 8px;
+  border-left: 4px solid var(--primary-color);
+}
+
+.evento-resumo p {
+  margin: 0;
+  color: var(--text-light);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.evento-actions {
+  display: flex;
+  gap: 8px;
+  padding: 16px 20px;
+  background: var(--background-gray);
+  border-top: 1px solid var(--border-color);
+  justify-content: flex-end;
+}
+
+.btn-action {
+  padding: 8px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  min-height: 36px;
+}
+
+.btn-edit {
+  background-color: rgba(33, 150, 243, 0.1);
+  color: #1976d2;
+}
+
+.btn-edit:hover {
+  background-color: #1976d2;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.btn-delete {
+  background-color: rgba(244, 67, 54, 0.1);
+  color: #d32f2f;
+}
+
+.btn-delete:hover {
+  background-color: #d32f2f;
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* Paginação */
+.paginacao {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-color);
+}
+
+.pagination-info {
+  color: var(--text-dark);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.btn-paginacao {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: var(--background-gray);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-dark);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-paginacao:hover:not(:disabled) {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.btn-paginacao:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.paginas {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-pagina {
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--border-color);
+  background: var(--background-light);
+  border-radius: 8px;
+  color: var(--text-dark);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-pagina:hover {
+  background: var(--background-gray);
+  border-color: var(--primary-color);
+}
+
+.btn-pagina.ativa {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .eventos-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .evento-header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .evento-tipo {
+    align-self: flex-end;
+  }
+
+  .lista-header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .paginacao {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .paginas {
+    order: -1;
+  }
+}
+
+@media (max-width: 480px) {
+  .evento-card {
+    margin: 0 -8px;
+  }
+
+  .evento-content {
+    padding: 16px;
+  }
+
+  .evento-header {
+    padding: 12px 16px;
+  }
+
+  .evento-actions {
+    padding: 12px 16px;
+  }
+}

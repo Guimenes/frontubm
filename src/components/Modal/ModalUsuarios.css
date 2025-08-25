@@ -1,0 +1,221 @@
+/* Modal específico para usuários */
+.modal-usuarios .modal-body {
+  padding: 24px;
+}
+
+.modal-usuarios .formulario-usuario {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.modal-usuarios .form-section {
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 20px;
+  border: 1px solid #e5e7eb;
+}
+
+.modal-usuarios .form-section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0 0 16px 0;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.modal-usuarios .form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.modal-usuarios .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.modal-usuarios .form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.modal-usuarios .form-group label {
+  font-weight: 500;
+  color: #374151;
+  font-size: 0.9rem;
+}
+
+.modal-usuarios .form-group input,
+.modal-usuarios .form-group select,
+.modal-usuarios .form-group textarea {
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  background-color: white;
+}
+
+.modal-usuarios .form-group input:focus,
+.modal-usuarios .form-group select:focus,
+.modal-usuarios .form-group textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(139, 21, 56, 0.1);
+}
+
+.modal-usuarios .form-group input:disabled,
+.modal-usuarios .form-group select:disabled {
+  background-color: #f3f4f6;
+  color: #6b7280;
+  cursor: not-allowed;
+}
+
+.modal-usuarios .checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.modal-usuarios .checkbox-group input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary-color);
+}
+
+.modal-usuarios .checkbox-group label {
+  font-weight: 400;
+  color: #374151;
+  cursor: pointer;
+}
+
+.modal-usuarios .form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 24px;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 24px;
+}
+
+.modal-usuarios .btn {
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modal-usuarios .btn-primary {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.modal-usuarios .btn-primary:hover {
+  background-color: #b91c51;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(139, 21, 56, 0.3);
+}
+
+.modal-usuarios .btn-secondary {
+  background-color: #6b7280;
+  color: white;
+}
+
+.modal-usuarios .btn-secondary:hover {
+  background-color: #4b5563;
+}
+
+.modal-usuarios .error-message {
+  color: #dc2626;
+  font-size: 0.8rem;
+  margin-top: 4px;
+}
+
+.modal-usuarios .success-message {
+  color: #16a34a;
+  font-size: 0.8rem;
+  margin-top: 4px;
+}
+
+.modal-usuarios .loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.modal-usuarios .loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #e5e7eb;
+  border-top: 3px solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive para modal de usuários */
+@media (max-width: 768px) {
+  .modal-usuarios .modal-body {
+    padding: 16px;
+  }
+
+  .modal-usuarios .form-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .modal-usuarios .form-section {
+    padding: 16px;
+  }
+
+  .modal-usuarios .form-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .modal-usuarios .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-usuarios .modal-body {
+    padding: 12px;
+  }
+
+  .modal-usuarios .form-section {
+    padding: 12px;
+  }
+
+  .modal-usuarios .form-section-title {
+    font-size: 1rem;
+  }
+
+  .modal-usuarios .form-group input,
+  .modal-usuarios .form-group select,
+  .modal-usuarios .form-group textarea {
+    padding: 10px;
+  }
+}

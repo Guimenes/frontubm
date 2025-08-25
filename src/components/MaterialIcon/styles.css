@@ -1,0 +1,77 @@
+.material-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-feature-settings: 'liga';
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  vertical-align: middle;
+  user-select: none;
+}
+
+.material-icon--small {
+  font-size: 18px !important;
+  width: 18px;
+  height: 18px;
+}
+
+.material-icon--medium {
+  font-size: 24px !important;
+  width: 24px;
+  height: 24px;
+}
+
+.material-icon--large {
+  font-size: 36px !important;
+  width: 36px;
+  height: 36px;
+}
+
+/* Cores específicas para contextos */
+.material-icon--primary {
+  color: var(--primary-color);
+}
+
+.material-icon--secondary {
+  color: var(--secondary-color);
+}
+
+.material-icon--success {
+  color: var(--success-color);
+}
+
+.material-icon--warning {
+  color: var(--warning-color);
+}
+
+.material-icon--danger {
+  color: var(--accent-color);
+}
+
+.material-icon--muted {
+  color: var(--text-light);
+}
+
+/* Animações */
+.material-icon--animated {
+  transition: all 0.3s ease;
+}
+
+.material-icon--animated:hover {
+  transform: scale(1.1);
+}
+
+.material-icon--spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
