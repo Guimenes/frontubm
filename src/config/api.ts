@@ -5,8 +5,8 @@ const getApiBaseUrl = () => {
     return 'http://localhost:5000/api';
   }
   
-  // Para produção, usar sempre o IP do backend
-  return 'http://72.60.8.84:5000/api';
+  // Para produção, usar o backend HTTPS
+  return 'https://srv950964.hstgr.cloud/api';
 };
 
 export const API_BASE_URL = getApiBaseUrl();
