@@ -3,6 +3,8 @@ import { Evento, Curso, Local } from '../../types';
 import { eventoService, cursoService, localService } from '../../services/api';
 import MaterialIcon from '../../components/MaterialIcon';
 import Modal from '../../components/Modal';
+import ErrorState from '../../components/ErrorState';
+import LoadingState from '../../components/LoadingState';
 import './styles.css';
 
 const Cronograma = () => {
@@ -346,10 +348,11 @@ const Cronograma = () => {
     return (
       <div className="cronograma">
         <div className="container">
-          <div className="loading">
-            <div className="spinner"></div>
-            <p>Carregando cronograma...</p>
-          </div>
+          <LoadingState
+            title="Carregando Cronograma"
+            message="Preparando a programação do seminário..."
+            icon="event"
+          />
         </div>
       </div>
     );
@@ -359,18 +362,10 @@ const Cronograma = () => {
     return (
       <div className="cronograma">
         <div className="container">
-          <div className="error-message">
-            <MaterialIcon name="error" size="large" />
-            <h3>Erro ao carregar dados</h3>
-            <p>{error}</p>
-            <button 
-              className="btn btn-primary"
-              onClick={carregarDados}
-            >
-              <MaterialIcon name="refresh" size="small" />
-              Tentar Novamente
-            </button>
-          </div>
+          <ErrorState
+            message={error}
+            onRetry={carregarDados}
+          />
         </div>
       </div>
     );

@@ -3,6 +3,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { Permissao, Perfil } from '../../types';
 import { api } from '../../services/api';
 import Modal from '../../components/Modal';
+import ErrorState from '../../components/ErrorState';
 import '../../components/Modal/ModalPermissoes.css';
 import './styles.css';
 
@@ -11,6 +12,7 @@ const Permissoes = () => {
   const [perfis, setPerfis] = useState<Perfil[]>([]);
   const [permissoesPorModulo, setPermissoesPorModulo] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'permissoes' | 'perfis'>('permissoes');
   
   // Modais
@@ -55,6 +57,7 @@ const Permissoes = () => {
   const carregarDados = async () => {
     try {
       setLoading(true);
+      setError(null);
       const promises = [];
       
       if (canListPermissoes) {
@@ -76,6 +79,9 @@ const Permissoes = () => {
         
         if (modulosResponse.success) {
           setPermissoesPorModulo((modulosResponse.data as any[]) || []);
+        } else {
+          setError('Erro ao carregar módulos de permissões');
+          return;
         }
       }
       
@@ -83,11 +89,14 @@ const Permissoes = () => {
         const perfisResponse = responses[responseIndex];
         if (perfisResponse.success) {
           setPerfis((perfisResponse.data as Perfil[]) || []);
+        } else {
+          setError('Erro ao carregar perfis');
+          return;
         }
       }
     } catch (error) {
       console.error('Erro ao carregar dados:', error);
-      alert('Erro ao carregar dados');
+      setError('Erro de conexão com o servidor. Tente novamente mais tarde.');
     } finally {
       setLoading(false);
     }
@@ -255,6 +264,17 @@ const Permissoes = () => {
 
   if (loading) {
     return <div className="loading">Carregando dados...</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="permissoes-container">
+        <ErrorState
+          message={error}
+          onRetry={carregarDados}
+        />
+      </div>
+    );
   }
 
   return (

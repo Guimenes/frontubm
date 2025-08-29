@@ -121,13 +121,34 @@ const Footer = () => {
                   {isFirstVisit && <span className="current-version-badge">ATUAL</span>}
                 </h3>
                 <p><strong>Data de lançamento:</strong> 29 de agosto de 2025</p>
-                <h4>Melhorias:</h4>
+                
+                <h4>🌟 Novos Recursos:</h4>
                 <ul>
-                  <li>Interface de usuário aprimorada</li>
-                  <li>Melhor responsividade em dispositivos móveis</li>
-                  <li>Otimizações de performance</li>
-                  <li>Correções de bugs menores</li>
-                  <li>Sistema de notas de versão interativo</li>
+                  <li>Novo componente ErrorState para melhor feedback de erros</li>
+                  <li>Novo componente LoadingState para estados de carregamento</li>
+                  <li>Sistema de animações aprimorado para feedback visual</li>
+                </ul>
+
+                <h4>✨ Melhorias na Interface:</h4>
+                <ul>
+                  <li>Redesign do estado de erro com ícones e animações</li>
+                  <li>Estado de carregamento mais moderno e consistente</li>
+                  <li>Cores padronizadas seguindo a identidade visual UBM</li>
+                  <li>Melhor contraste e legibilidade</li>
+                </ul>
+
+                <h4>🛠️ Correções:</h4>
+                <ul>
+                  <li>Ajuste nas cores do tema escuro para manter consistência</li>
+                  <li>Correção na exibição de mensagens de erro</li>
+                  <li>Padronização das animações de carregamento</li>
+                </ul>
+
+                <h4>⚡ Otimizações:</h4>
+                <ul>
+                  <li>Melhor experiência de usuário durante carregamentos</li>
+                  <li>Feedback mais claro em casos de erro</li>
+                  <li>Transições mais suaves entre estados</li>
                 </ul>
               </div>
               
