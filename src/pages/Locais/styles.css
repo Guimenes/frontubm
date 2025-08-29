@@ -1,6 +1,7 @@
 .locais-page {
   padding: 0;
-  min-height: calc(100vh - 200px); /* Ajustando altura mínima */
+  min-height: calc(100vh - 200px);
+  overflow-x: hidden; /* Previne rolagem horizontal */
 }
 
 .page-header {
@@ -8,6 +9,16 @@
   color: white;
   padding: 32px 0;
   margin-bottom: 32px;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  width: 100vw;
+}
+
+.page-header .container {
+  padding: 0 20px; /* Readiciona o padding apenas para o conteúdo interno */
 }
 
 .page-title {
@@ -60,6 +71,10 @@
     margin-bottom: 24px;
   }
   
+  .page-header .container {
+    padding: 0 16px; /* Padding mobile */
+  }
+  
   .page-title h1 {
     font-size: 1.75rem;
     flex-direction: column;
@@ -95,3 +110,5 @@
     font-size: 2rem;
   }
 }
+
+

@@ -1931,16 +1931,6 @@
   position: relative;
 }
 
-.secao-titulo::after {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  width: 50px;
-  height: 2px;
-  background: var(--primary-color);
-}
-
 .secao-titulo h3 {
   margin: 0;
   font-size: 1.1rem;
