@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Evento, Curso } from '../../types';
-import { eventoService, cursoService } from '../../services/api';
+import { Evento, Curso, Local } from '../../types';
+import { eventoService, cursoService, localService } from '../../services/api';
 import MaterialIcon from '../../components/MaterialIcon';
 import Modal from '../../components/Modal';
 import './styles.css';
@@ -8,6 +8,7 @@ import './styles.css';
 const Cronograma = () => {
   const [eventos, setEventos] = useState<Evento[]>([]);
   const [cursos, setCursos] = useState<Curso[]>([]);
+  const [locais, setLocais] = useState<Local[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>('');
   const [eventoSelecionado, setEventoSelecionado] = useState<Evento | null>(null);
@@ -39,6 +40,15 @@ const Cronograma = () => {
         setError('Erro ao carregar cursos: ' + (responseCursos.message || 'Erro desconhecido'));
       }
 
+      // Carregar locais do backend
+      const responseLocais = await localService.listarLocais();
+      if (responseLocais.success && responseLocais.data) {
+        setLocais(responseLocais.data);
+      } else {
+        console.error('Erro ao carregar locais:', responseLocais.message);
+        setLocais([]);
+      }
+
   // Carregar eventos do backend (aumenta o limite para exibir todo o cronograma)
   const responseEventos = await eventoService.listarEventos({ limit: 1000 });
       if (responseEventos.success && responseEventos.data) {
@@ -65,6 +75,7 @@ const Cronograma = () => {
       console.error('Erro ao carregar dados:', error);
       setEventos([]);
       setCursos([]);
+      setLocais([]);
       setError('Erro de conexão com o servidor. Verifique se o backend está rodando.');
     } finally {
       setLoading(false);
@@ -279,6 +290,16 @@ const Cronograma = () => {
       month: 'long',
       year: 'numeric'
     });
+  };
+
+  const obterDetalhesLocal = (nomeLocal: string): Local | null => {
+    // Tenta encontrar um local que corresponda ao nome ou código
+    return locais.find(local => 
+      local.nome === nomeLocal || 
+      nomeLocal.includes(local.nome) ||
+      nomeLocal.includes(local.cod) ||
+      local.nome.includes(nomeLocal)
+    ) || null;
   };
 
   // Agrupa eventos por curso, mantendo seção "GERAIS" para sem curso
@@ -720,7 +741,18 @@ const Cronograma = () => {
                     <div className="info-card-content">
                       <h3>Local</h3>
                       <p className="local-nome">{eventoSelecionado.sala}</p>
-                      <p className="local-instrucao">Consulte a sinalização do campus</p>
+                      {(() => {
+                        const detalhesLocal = obterDetalhesLocal(eventoSelecionado.sala);
+                        if (detalhesLocal && detalhesLocal.descricao) {
+                          return (
+                            <p className="local-descricao">{detalhesLocal.descricao}</p>
+                          );
+                        } else {
+                          return (
+                            <p className="local-instrucao">Consulte a sinalização do campus</p>
+                          );
+                        }
+                      })()}
                     </div>
                   </div>
                 </div>

@@ -281,6 +281,13 @@
   }
 }
 
+/* Reset inicial para todos os itens */
+.sidebar .nav-menu li {
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+/* Animações quando o sidebar abre */
 .sidebar.open .nav-menu li {
   animation: slideInRight 0.3s ease forwards;
 }
@@ -290,6 +297,18 @@
 .sidebar.open .nav-menu li:nth-child(3) { animation-delay: 0.3s; }
 .sidebar.open .nav-menu li:nth-child(4) { animation-delay: 0.4s; }
 .sidebar.open .nav-menu li:nth-child(5) { animation-delay: 0.5s; }
+.sidebar.open .nav-menu li:nth-child(6) { animation-delay: 0.6s; }
+.sidebar.open .nav-menu li:nth-child(7) { animation-delay: 0.7s; }
+.sidebar.open .nav-menu li:nth-child(8) { animation-delay: 0.8s; }
+
+/* Fallback para itens além do 8º */
+.sidebar.open .nav-menu li:nth-child(n+9) { animation-delay: 0.9s; }
+
+/* Reset inicial para a saudação */
+.sidebar .user-greeting {
+  opacity: 0;
+  transform: translateX(20px);
+}
 
 .sidebar.open .user-greeting {
   animation: slideInRight 0.3s ease forwards;
