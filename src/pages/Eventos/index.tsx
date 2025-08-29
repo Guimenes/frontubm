@@ -3,7 +3,7 @@ import MaterialIcon from '../../components/MaterialIcon';
 import FormularioEvento from '../../components/FormularioEvento';
 import ListaEvento from '../../components/ListaEvento';
 import FiltrosEvento from '../../components/FiltrosEvento';
-import Modal from '../../components/Modal';
+import ModalEvento from '../../components/ModalEvento';
 import { Evento } from '../../types';
 import './styles.css';
 
@@ -23,13 +23,13 @@ const Eventos = () => {
   // Bloqueia scroll do body quando modal está aberto
   useEffect(() => {
     if (mostrarFormulario) {
-      document.body.classList.add('modal-open');
+      document.body.classList.add('modal-evento-open');
     } else {
-      document.body.classList.remove('modal-open');
+      document.body.classList.remove('modal-evento-open');
     }
 
     return () => {
-      document.body.classList.remove('modal-open');
+      document.body.classList.remove('modal-evento-open');
     };
   }, [mostrarFormulario]);
 
@@ -104,18 +104,17 @@ const Eventos = () => {
       </div>
 
       {/* Modal para formulário */}
-      <Modal
+      <ModalEvento
         isOpen={mostrarFormulario}
         onClose={handleCancelarFormulario}
         title={eventoParaEditar ? 'Editar Evento' : 'Novo Evento'}
-        size="large"
       >
         <FormularioEvento
           evento={eventoParaEditar || undefined}
           onSalvar={handleEventoSalvo}
           onCancelar={handleCancelarFormulario}
         />
-      </Modal>
+      </ModalEvento>
     </div>
   );
 };

@@ -167,6 +167,17 @@ const ListaEvento: React.FC<ListaEventoProps> = ({ onEditar, onAtualizar, atuali
     }
   };
 
+  const getTipoEventoTexto = (tipoEvento: string) => {
+    switch (tipoEvento) {
+      case 'Apresentação de Trabalhos':
+        return 'Apresentação de Trabalhos';
+      case 'Palestra Principal':
+        return 'Palestra';
+      default:
+        return tipoEvento;
+    }
+  };
+
   if (loading) {
     return (
       <div className="lista-loading">
@@ -195,7 +206,7 @@ const ListaEvento: React.FC<ListaEventoProps> = ({ onEditar, onAtualizar, atuali
         </div>
         <div className={`evento-tipo ${getTipoEventoClass(evento.tipoEvento)}`}>
           <MaterialIcon name={getTipoEventoIcon(evento.tipoEvento)} size="small" />
-          {evento.tipoEvento}
+          {getTipoEventoTexto(evento.tipoEvento)}
         </div>
       </div>
 
