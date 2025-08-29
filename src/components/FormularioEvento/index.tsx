@@ -36,6 +36,7 @@ const FormularioEvento: React.FC<FormularioEventoProps> = ({
   const [loadingLocais, setLoadingLocais] = useState(true);
   const [loadingCursos, setLoadingCursos] = useState(false);
   const [errors, setErrors] = useState<any>({});
+  const [verificandoConflito, setVerificandoConflito] = useState(false);
 
   useEffect(() => {
     if (evento) {
@@ -90,7 +91,42 @@ const FormularioEvento: React.FC<FormularioEventoProps> = ({
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const verificarConflitoHorario = async (data: string, hora: string, curso: string): Promise<boolean> => {
+    if (!data || !hora || !curso) return false;
+
+    setVerificandoConflito(true);
+    try {
+      // Buscar eventos existentes para o mesmo curso, data e hora
+      const response = await eventoService.listarEventos({
+        data,
+        curso,
+        limit: 1000 // Buscar todos os eventos para ter certeza
+      });
+
+      if (response.success && response.data) {
+        const eventosConflitantes = response.data.filter((eventoExistente: Evento) => {
+          // Se estamos editando, excluir o próprio evento da verificação
+          if (evento?._id && eventoExistente._id === evento._id) {
+            return false;
+          }
+
+          // Verificar se é o mesmo horário
+          const horaExistente = new Date(eventoExistente.hora).toTimeString().slice(0, 5);
+          return horaExistente === hora;
+        });
+
+        return eventosConflitantes.length > 0;
+      }
+    } catch (error) {
+      console.error('Erro ao verificar conflito:', error);
+    } finally {
+      setVerificandoConflito(false);
+    }
+
+    return false;
+  };
+
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
     const checked = (e.target as HTMLInputElement).checked;
     
@@ -110,13 +146,6 @@ const FormularioEvento: React.FC<FormularioEventoProps> = ({
       newFormData.orientador = '';
     }
     
-    // Se mudou o tipo de evento para "Banner", limpar autores, orientador e palestrante
-    if (name === 'tipoEvento' && value === 'Banner') {
-      newFormData.autores = [''];
-      newFormData.orientador = '';
-      newFormData.palestrante = '';
-    }
-    
     setFormData(newFormData);
     
     // Limpar erro do campo quando o usuário começar a digitar
@@ -125,6 +154,29 @@ const FormularioEvento: React.FC<FormularioEventoProps> = ({
         ...prev,
         [name]: ''
       }));
+    }
+
+    // Verificar conflito de horário quando data, hora ou curso mudarem
+    if ((name === 'data' || name === 'hora' || name === 'curso') && 
+        newFormData.data && newFormData.hora && newFormData.curso) {
+      
+      const temConflito = await verificarConflitoHorario(
+        newFormData.data, 
+        newFormData.hora, 
+        newFormData.curso
+      );
+
+      if (temConflito) {
+        setErrors((prev: any) => ({
+          ...prev,
+          conflito: 'Já existe um evento para este curso no mesmo dia e horário'
+        }));
+      } else {
+        setErrors((prev: any) => ({
+          ...prev,
+          conflito: ''
+        }));
+      }
     }
   };
 
@@ -162,7 +214,7 @@ const FormularioEvento: React.FC<FormularioEventoProps> = ({
     }
   };
 
-  const validateForm = () => {
+  const validateForm = async () => {
     const novosErros: any = {};
 
     if (!formData.data) novosErros.data = 'Data é obrigatória';
@@ -180,13 +232,24 @@ const FormularioEvento: React.FC<FormularioEventoProps> = ({
       if (!formData.palestrante.trim()) {
         novosErros.palestrante = 'Palestrante é obrigatório para Palestra Principal';
       }
-    } else if (formData.tipoEvento === 'Banner') {
-      // Para banners, apenas tema é obrigatório (sem autores, palestrante ou orientador)
     } else {
-      // Para outros tipos (Apresentação de Trabalhos e Oficina), validar autores
+      // Para outros tipos (Apresentação de Trabalhos, Oficina e Banner), validar autores
       const autoresPreenchidos = formData.autores.filter(autor => autor.trim() !== '');
       if (autoresPreenchidos.length === 0) {
         novosErros.autores = 'Pelo menos um autor é obrigatório';
+      }
+    }
+
+    // Verificar conflito de horário se todos os campos necessários estão preenchidos
+    if (formData.data && formData.hora && formData.curso) {
+      const temConflito = await verificarConflitoHorario(
+        formData.data, 
+        formData.hora, 
+        formData.curso
+      );
+
+      if (temConflito) {
+        novosErros.conflito = 'Já existe um evento para este curso no mesmo dia e horário';
       }
     }
 
@@ -197,7 +260,8 @@ const FormularioEvento: React.FC<FormularioEventoProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!validateForm()) {
+    const isValid = await validateForm();
+    if (!isValid) {
       return;
     }
 
@@ -266,6 +330,20 @@ const FormularioEvento: React.FC<FormularioEventoProps> = ({
         </h3>
       </div>
 
+      {errors.conflito && (
+        <div className="alert alert-error">
+          <MaterialIcon name="warning" size="small" />
+          {errors.conflito}
+        </div>
+      )}
+
+      {verificandoConflito && (
+        <div className="alert alert-info">
+          <MaterialIcon name="hourglass_empty" size="small" />
+          Verificando conflitos de horário...
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="formulario">
         <div className="formulario-row">
           <div className="form-group">
@@ -312,14 +390,18 @@ const FormularioEvento: React.FC<FormularioEventoProps> = ({
         <div className="formulario-row">
           <div className="form-group">
             <label htmlFor="data">Data *</label>
-            <input
-              type="date"
+            <select
               id="data"
               name="data"
               value={formData.data}
               onChange={handleChange}
               className={errors.data ? 'error' : ''}
-            />
+            >
+              <option value="">Selecione uma data</option>
+              <option value="2025-10-22">22 de Outubro de 2025</option>
+              <option value="2025-10-23">23 de Outubro de 2025</option>
+              <option value="2025-10-24">24 de Outubro de 2025</option>
+            </select>
             {errors.data && <span className="error-message">{errors.data}</span>}
           </div>
 
@@ -407,13 +489,6 @@ const FormularioEvento: React.FC<FormularioEventoProps> = ({
               placeholder="Nome do palestrante"
             />
             {errors.palestrante && <span className="error-message">{errors.palestrante}</span>}
-          </div>
-        ) : formData.tipoEvento === 'Banner' ? (
-          <div className="form-group">
-            <div className="banner-info">
-              <MaterialIcon name="info" />
-              <p>Para eventos do tipo Banner, apenas o tema/título é obrigatório.</p>
-            </div>
           </div>
         ) : (
           <>

@@ -326,3 +326,35 @@ select {
   font-size: 0.9rem;
   line-height: 1.4;
 }
+
+/* Alertas de conflito e verificação */
+.alert {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.alert-error {
+  background: rgba(244, 67, 54, 0.1);
+  border: 1px solid rgba(244, 67, 54, 0.3);
+  color: #c62828;
+}
+
+.alert-error .material-icon {
+  color: #c62828;
+}
+
+.alert-info {
+  background: rgba(33, 150, 243, 0.1);
+  border: 1px solid rgba(33, 150, 243, 0.3);
+  color: #1565c0;
+}
+
+.alert-info .material-icon {
+  color: #1565c0;
+}

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { authService, LoginData } from '../../services/api';
 import './styles.css';
@@ -60,9 +60,12 @@ const Login = () => {
         <div className="login-container">
           <div className="login-card">
             <div className="login-header">
+              <Link to="/" className="back-link">
+                ← Voltar para Home
+              </Link>
               <div className="logo-section">
                 <img 
-                  src="https://www.ubm.br/seminario-pesquisa/images/logo.png" 
+                  src="/images/logo.png" 
                   alt="Logo do Seminário UBM"
                   className="seminario-logo"
                 />
