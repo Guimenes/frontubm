@@ -68,16 +68,12 @@ const FiltrosEvento: React.FC<FiltrosEventoProps> = ({ onFiltrar }) => {
     carregarDados();
   }, []);
 
-  // Enviar filtros iniciais com groupByCurso ativo
+  // Enviar filtros iniciais com groupByCurso ativo apenas uma vez
   useEffect(() => {
     console.log('FiltrosEvento: Enviando filtros iniciais com groupByCurso: true');
-    // Delay pequeno para evitar conflito com outros useEffects
-    const timer = setTimeout(() => {
-      onFiltrar({ groupByCurso: true });
-    }, 100);
-    
-    return () => clearTimeout(timer);
-  }, [onFiltrar]);
+    onFiltrar({ groupByCurso: true });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Array vazio - executa apenas uma vez
 
   const handleFiltroChange = (campo: string, valor: string) => {
     const novosFiltros = {

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import MaterialIcon from '../../components/MaterialIcon';
 import FormularioEvento from '../../components/FormularioEvento';
 import ListaEvento from '../../components/ListaEvento';
@@ -59,7 +59,7 @@ const Eventos = () => {
     // Função chamada quando a lista precisar ser atualizada
   };
 
-  const handleFiltroChange = (novosFiltros: {
+  const handleFiltroChange = useCallback((novosFiltros: {
     busca?: string;
     tipoEvento?: string;
     data?: string;
@@ -69,7 +69,7 @@ const Eventos = () => {
   }) => {
     console.log('Eventos: Recebendo novos filtros:', novosFiltros);
     setFiltros(novosFiltros);
-  };
+  }, []);
 
   return (
     <div className="eventos-page">

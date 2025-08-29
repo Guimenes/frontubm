@@ -3,6 +3,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { Usuario, Perfil } from '../../types';
 import { api } from '../../services/api';
 import MaterialIcon from '../MaterialIcon';
+import ModalConfirmacao from '../ModalConfirmacao';
 import './styles.css';
 
 interface ListaUsuarioProps {
@@ -10,18 +11,24 @@ interface ListaUsuarioProps {
     busca?: string;
     perfil?: string;
     status?: string;
-    curso?: string;
   };
   onEditar: (usuario: Usuario) => void;
   atualizar: boolean;
   onAtualizarComplete: () => void;
+  onSucesso?: (titulo: string, mensagem?: string) => void;
+  onErro?: (titulo: string, mensagem?: string) => void;
 }
 
-const ListaUsuario = ({ filtros, onEditar, atualizar, onAtualizarComplete }: ListaUsuarioProps) => {
+const ListaUsuario = ({ filtros, onEditar, atualizar, onAtualizarComplete, onSucesso, onErro }: ListaUsuarioProps) => {
   const { hasPermission, user } = useAuth();
-  const [usuarios, setUsuarios] = useState<Usuario[]>([]);
+  const [usuarios, setUsuarios] = useState<{ [key: string]: Usuario[] }>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [modalConfirmacao, setModalConfirmacao] = useState({
+    isOpen: false,
+    usuario: null as Usuario | null,
+    carregando: false
+  });
 
   const canEdit = hasPermission('USUARIOS_EDITAR');
   const canDelete = hasPermission('USUARIOS_EXCLUIR');
@@ -69,24 +76,29 @@ const ListaUsuario = ({ filtros, onEditar, atualizar, onAtualizarComplete }: Lis
           );
         }
 
-        if (filtros.curso) {
-          const curso = filtros.curso.toLowerCase();
-          usuariosFiltrados = usuariosFiltrados.filter((usuario: Usuario) =>
-            usuario.curso?.toLowerCase().includes(curso)
-          );
-        }
+        // Agrupar usuários por perfil e ordenar por nome
+        const usuariosAgrupados = usuariosFiltrados.reduce((grupos: any, usuario: Usuario) => {
+          const perfilNome = getPerfilNome(usuario.perfil);
+          if (!grupos[perfilNome]) {
+            grupos[perfilNome] = [];
+          }
+          grupos[perfilNome].push(usuario);
+          return grupos;
+        }, {});
 
-        // Ordenar por nome
-        usuariosFiltrados.sort((a: Usuario, b: Usuario) => a.nome.localeCompare(b.nome));
+        // Ordenar usuários dentro de cada grupo
+        Object.keys(usuariosAgrupados).forEach(perfil => {
+          usuariosAgrupados[perfil].sort((a: Usuario, b: Usuario) => a.nome.localeCompare(b.nome));
+        });
 
-        setUsuarios(usuariosFiltrados);
+        setUsuarios(usuariosAgrupados);
       } else {
-        setUsuarios([]);
+        setUsuarios({});
       }
     } catch (error: any) {
       console.error('Erro ao carregar usuários:', error);
       setError('Erro ao carregar usuários. Tente novamente.');
-      setUsuarios([]);
+      setUsuarios({});
     } finally {
       setLoading(false);
     }
@@ -95,22 +107,48 @@ const ListaUsuario = ({ filtros, onEditar, atualizar, onAtualizarComplete }: Lis
   const handleDelete = async (usuario: Usuario) => {
     if (!canDelete) return;
     
-    const action = usuario.ativo ? 'desativar' : 'ativar';
-    const confirmMessage = `Tem certeza que deseja ${action} o usuário ${usuario.nome}?`;
-    
-    if (!window.confirm(confirmMessage)) return;
+    setModalConfirmacao({
+      isOpen: true,
+      usuario: usuario,
+      carregando: false
+    });
+  };
+
+  const confirmarAlteracaoStatus = async () => {
+    if (!modalConfirmacao.usuario) return;
+
+    setModalConfirmacao(prev => ({ ...prev, carregando: true }));
 
     try {
-      const response = await api.delete(`/usuarios/${usuario._id}`);
+      const response = await api.delete(`/usuarios/${modalConfirmacao.usuario._id}`);
       if (response.success) {
-        alert(response.message || `Usuário ${action === 'desativar' ? 'desativado' : 'ativado'} com sucesso`);
+        const action = modalConfirmacao.usuario.ativo ? 'desativado' : 'ativado';
+        onSucesso?.(
+          `Usuário ${action} com sucesso`,
+          `O usuário ${modalConfirmacao.usuario.nome} foi ${action} com sucesso.`
+        );
         carregarUsuarios();
+        setModalConfirmacao({
+          isOpen: false,
+          usuario: null,
+          carregando: false
+        });
       }
     } catch (error: any) {
       console.error('Erro ao alterar status do usuário:', error);
+      const action = modalConfirmacao.usuario.ativo ? 'desativar' : 'ativar';
       const message = error.response?.data?.message || `Erro ao ${action} usuário`;
-      alert(message);
+      onErro?.('Erro na operação', message);
+      setModalConfirmacao(prev => ({ ...prev, carregando: false }));
     }
+  };
+
+  const cancelarAlteracaoStatus = () => {
+    setModalConfirmacao({
+      isOpen: false,
+      usuario: null,
+      carregando: false
+    });
   };
 
   const formatarDataUltimoLogin = (data?: Date) => {
@@ -155,7 +193,7 @@ const ListaUsuario = ({ filtros, onEditar, atualizar, onAtualizarComplete }: Lis
     );
   }
 
-  if (usuarios.length === 0) {
+  if (Object.keys(usuarios).length === 0) {
     return (
       <div className="lista-usuario-empty">
         <MaterialIcon name="person_outline" />
@@ -171,93 +209,121 @@ const ListaUsuario = ({ filtros, onEditar, atualizar, onAtualizarComplete }: Lis
 
   return (
     <div className="lista-usuario">
-      <div className="lista-header">
-        <h3>
-          <MaterialIcon name="people" />
-          {usuarios.length} usuário(s) encontrado(s)
-        </h3>
-      </div>
-
-      <div className="usuarios-grid">
-        {usuarios.map((usuario) => (
-          <div key={usuario._id} className={`usuario-card ${!usuario.ativo ? 'inativo' : ''}`}>
-            <div className="usuario-header">
-              <div className="usuario-avatar">
-                <MaterialIcon name="person" />
+      <div className="usuarios-container">
+        {Object.entries(usuarios).map(([perfilNome, usuariosGrupo]) => (
+          <div key={perfilNome} className="secao-tipo-perfil">
+            <div className="secao-header">
+              <div className="secao-titulo">
+                <h3>
+                  <MaterialIcon name="account_circle" />
+                  {perfilNome}
+                </h3>
               </div>
-              <div className="usuario-info">
-                <h4>{usuario.nome}</h4>
-                <p className="usuario-email">{usuario.email}</p>
-              </div>
-              <div className={`usuario-status ${usuario.ativo ? 'ativo' : 'inativo'}`}>
-                <MaterialIcon name={usuario.ativo ? 'check_circle' : 'cancel'} />
-                <span>{usuario.ativo ? 'Ativo' : 'Inativo'}</span>
+              <div className="contador-usuarios">
+                {usuariosGrupo.length} usuário{usuariosGrupo.length !== 1 ? 's' : ''}
               </div>
             </div>
 
-            <div className="usuario-details">
-              <div className="detail-item">
-                <MaterialIcon name="account_circle" />
-                <span>
-                  <strong>Perfil:</strong> {getPerfilNome(usuario.perfil)}
-                </span>
-              </div>
-              
-              {usuario.curso && (
-                <div className="detail-item">
-                  <MaterialIcon name="school" />
-                  <span>
-                    <strong>Curso:</strong> {usuario.curso}
-                  </span>
+            <div className="usuarios-grid">
+              {usuariosGrupo.map((usuario) => (
+                <div key={usuario._id} className={`usuario-card ${!usuario.ativo ? 'inativo' : ''}`}>
+                  <div className="usuario-header">
+                    <div className="usuario-avatar">
+                      <MaterialIcon name="person" />
+                    </div>
+                    <div className="usuario-info">
+                      <h4>{usuario.nome}</h4>
+                      <p className="usuario-email">{usuario.email}</p>
+                    </div>
+                    <div className={`usuario-status ${usuario.ativo ? 'ativo' : 'inativo'}`}>
+                      <MaterialIcon name={usuario.ativo ? 'check_circle' : 'cancel'} />
+                      <span>{usuario.ativo ? 'Ativo' : 'Inativo'}</span>
+                    </div>
+                  </div>
+
+                  <div className="usuario-details">
+                    <div className="detail-item">
+                      <MaterialIcon name="account_circle" />
+                      <span>
+                        <strong>Perfil:</strong> {getPerfilNome(usuario.perfil)}
+                      </span>
+                    </div>
+                    
+                    {usuario.curso && (
+                      <div className="detail-item">
+                        <MaterialIcon name="school" />
+                        <span>
+                          <strong>Curso:</strong> {usuario.curso}
+                        </span>
+                      </div>
+                    )}
+                    
+                    <div className="detail-item">
+                      <MaterialIcon name="schedule" />
+                      <span>
+                        <strong>Último login:</strong> {formatarDataUltimoLogin(usuario.ultimoLogin)}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="usuario-actions">
+                    {canEdit && (
+                      <button
+                        onClick={() => onEditar(usuario)}
+                        className="btn btn-outline"
+                        title="Editar usuário"
+                      >
+                        <MaterialIcon name="edit" />
+                        Editar
+                      </button>
+                    )}
+                    
+                    {canDelete && user?.id !== usuario._id && (
+                      <button
+                        onClick={() => handleDelete(usuario)}
+                        className={`btn ${usuario.ativo ? 'btn-danger' : 'btn-success'}`}
+                        title={usuario.ativo ? 'Desativar usuário' : 'Ativar usuário'}
+                      >
+                        <MaterialIcon name={usuario.ativo ? 'person_remove' : 'person_add'} />
+                        {usuario.ativo ? 'Desativar' : 'Ativar'}
+                      </button>
+                    )}
+                    
+                    {user?.id === usuario._id && (
+                      <span className="own-user-indicator" style={{
+                        color: '#666', 
+                        fontSize: '0.875rem',
+                        fontStyle: 'italic',
+                        padding: '8px 12px'
+                      }}>
+                        <MaterialIcon name="account_circle" style={{fontSize: '16px', marginRight: '4px'}} />
+                        Seu usuário
+                      </span>
+                    )}
+                  </div>
                 </div>
-              )}
-              
-              <div className="detail-item">
-                <MaterialIcon name="schedule" />
-                <span>
-                  <strong>Último login:</strong> {formatarDataUltimoLogin(usuario.ultimoLogin)}
-                </span>
-              </div>
-            </div>
-
-            <div className="usuario-actions">
-              {canEdit && (
-                <button
-                  onClick={() => onEditar(usuario)}
-                  className="btn btn-outline"
-                  title="Editar usuário"
-                >
-                  <MaterialIcon name="edit" />
-                  Editar
-                </button>
-              )}
-              
-              {canDelete && user?.id !== usuario._id && (
-                <button
-                  onClick={() => handleDelete(usuario)}
-                  className={`btn ${usuario.ativo ? 'btn-danger' : 'btn-success'}`}
-                  title={usuario.ativo ? 'Desativar usuário' : 'Ativar usuário'}
-                >
-                  <MaterialIcon name={usuario.ativo ? 'person_remove' : 'person_add'} />
-                  {usuario.ativo ? 'Desativar' : 'Ativar'}
-                </button>
-              )}
-              
-              {user?.id === usuario._id && (
-                <span className="own-user-indicator" style={{
-                  color: '#666', 
-                  fontSize: '0.875rem',
-                  fontStyle: 'italic',
-                  padding: '8px 12px'
-                }}>
-                  <MaterialIcon name="account_circle" style={{fontSize: '16px', marginRight: '4px'}} />
-                  Seu usuário
-                </span>
-              )}
+              ))}
             </div>
           </div>
         ))}
       </div>
+
+      {/* Modal de Confirmação */}
+      <ModalConfirmacao
+        isOpen={modalConfirmacao.isOpen}
+        onClose={cancelarAlteracaoStatus}
+        onConfirm={confirmarAlteracaoStatus}
+        titulo={modalConfirmacao.usuario?.ativo ? 'Desativar Usuário' : 'Ativar Usuário'}
+        mensagem={
+          modalConfirmacao.usuario?.ativo
+            ? `Tem certeza que deseja desativar o usuário ${modalConfirmacao.usuario?.nome}? Ele não conseguirá mais acessar o sistema.`
+            : `Tem certeza que deseja ativar o usuário ${modalConfirmacao.usuario?.nome}? Ele terá acesso ao sistema novamente.`
+        }
+        tipo={modalConfirmacao.usuario?.ativo ? 'danger' : 'info'}
+        textoBotaoConfirmar={modalConfirmacao.usuario?.ativo ? 'Desativar' : 'Ativar'}
+        textoBotaoCancelar="Cancelar"
+        carregando={modalConfirmacao.carregando}
+      />
     </div>
   );
 };

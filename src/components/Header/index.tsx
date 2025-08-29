@@ -36,7 +36,7 @@ const Header: React.FC = () => {
           <div className="header-logo">
             <Link to="/cronograma" onClick={closeMenu}>
               <img 
-                src="https://www.ubm.br/seminario-pesquisa/images/logo.png" 
+                src="/images/logo.png" 
                 alt="Logo do Seminário UBM"
                 className="seminario-logo2"
               />

@@ -1,3 +1,23 @@
+/* Override específico para modal de locais */
+.modal-locais .formulario-local {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  max-height: none; /* Remove limitação de altura no modal */
+  overflow-y: visible; /* Modal já gerencia scroll */
+  padding: 0; /* Modal já tem padding através do formulário interno */
+  box-shadow: none;
+  border-radius: 0;
+  max-width: none;
+  margin: 0;
+  background: var(--background-light);
+}
+
+.modal-locais .formulario-local .formulario {
+  padding: 24px;
+  flex: 1;
+}
+
 .formulario-local {
   background: var(--background-light);
   border-radius: 12px;
@@ -5,75 +25,76 @@
   overflow: hidden;
   max-width: 800px;
   margin: 0 auto;
+  width: 100%;
 }
 
-.formulario {
+.formulario-local .formulario {
   padding: 32px;
 }
 
-.formulario-row {
+.formulario-local .formulario-row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 24px;
-  margin-bottom: 24px;
+  gap: 20px;
+  margin-bottom: 20px;
 }
 
-.form-group {
+.formulario-local .form-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
-.form-group.full-width {
+.formulario-local .form-group.full-width {
   grid-column: 1 / -1;
 }
 
-.form-group label {
+.formulario-local .form-group label {
   font-weight: 600;
   color: var(--text-dark);
   font-size: 0.95rem;
 }
 
-.form-group input,
-.form-group select,
-.form-group textarea {
-  padding: 12px 16px;
+.formulario-local .form-group input,
+.formulario-local .form-group select,
+.formulario-local .form-group textarea {
+  padding: 10px 14px;
   border: 2px solid var(--border-color);
   border-radius: 8px;
-  font-size: 1rem;
+  font-size: 0.95rem;
   transition: all 0.2s ease;
   background: var(--background-light);
 }
 
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
+.formulario-local .form-group input:focus,
+.formulario-local .form-group select:focus,
+.formulario-local .form-group textarea:focus {
   outline: none;
   border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgba(139, 21, 56, 0.1);
 }
 
-.form-group input.error,
-.form-group select.error,
-.form-group textarea.error {
+.formulario-local .form-group input.error,
+.formulario-local .form-group select.error,
+.formulario-local .form-group textarea.error {
   border-color: var(--accent-color);
   box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
 }
 
-.form-group textarea {
+.formulario-local .form-group textarea {
   resize: vertical;
   min-height: 80px;
   font-family: inherit;
   line-height: 1.5;
 }
 
-.form-hint {
+.formulario-local .form-hint {
   color: var(--text-light);
   font-size: 0.8rem;
   margin-top: 4px;
 }
 
-.error-message {
+.formulario-local .error-message {
   color: var(--accent-color);
   font-size: 0.875rem;
   font-weight: 500;
@@ -83,59 +104,59 @@
   gap: 4px;
 }
 
-.formulario-actions {
+.formulario-local .formulario-actions {
   display: flex;
-  gap: 16px;
+  gap: 14px;
   justify-content: flex-end;
-  margin-top: 32px;
-  padding-top: 24px;
+  margin-top: 24px;
+  padding-top: 20px;
   border-top: 1px solid var(--border-color);
 }
 
-.btn {
+.formulario-local .btn {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 24px;
+  padding: 10px 20px;
   border: none;
   border-radius: 8px;
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   text-decoration: none;
-  min-width: 120px;
+  min-width: 110px;
   justify-content: center;
 }
 
-.btn:disabled {
+.formulario-local .btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
-.btn-primary {
+.formulario-local .btn-primary {
   background-color: var(--primary-color);
   color: white;
 }
 
-.btn-primary:hover:not(:disabled) {
+.formulario-local .btn-primary:hover:not(:disabled) {
   background-color: var(--secondary-color);
   transform: translateY(-2px);
 }
 
-.btn-secondary {
+.formulario-local .btn-secondary {
   background: transparent;
   color: var(--primary-color);
   border: 2px solid var(--primary-color);
 }
 
-.btn-secondary:hover:not(:disabled) {
+.formulario-local .btn-secondary:hover:not(:disabled) {
   background: var(--primary-color);
   color: white;
   transform: translateY(-2px);
 }
 
-.spinning {
+.formulario-local .spinning {
   animation: spin 1s linear infinite;
 }
 
@@ -146,40 +167,48 @@
 
 /* Responsividade */
 @media (max-width: 768px) {
-  .formulario {
-    padding: 24px;
+  .formulario-local .formulario {
+    padding: 20px;
   }
   
-  .formulario-row {
+  .modal-locais .formulario-local .formulario {
+    padding: 18px;
+  }
+  
+  .formulario-local .formulario-row {
     grid-template-columns: 1fr;
-    gap: 20px;
-    margin-bottom: 20px;
+    gap: 16px;
+    margin-bottom: 18px;
   }
   
-  .formulario-actions {
+  .formulario-local .formulario-actions {
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
   }
   
-  .btn {
+  .formulario-local .btn {
     width: 100%;
   }
 }
 
 @media (max-width: 480px) {
-  .formulario {
+  .formulario-local .formulario {
     padding: 16px;
   }
   
-  .formulario-row {
-    gap: 16px;
-    margin-bottom: 16px;
+  .modal-locais .formulario-local .formulario {
+    padding: 14px;
   }
   
-  .form-group input,
-  .form-group select,
-  .form-group textarea {
-    padding: 10px 12px;
-    font-size: 0.95rem;
+  .formulario-local .formulario-row {
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  
+  .formulario-local .form-group input,
+  .formulario-local .form-group select,
+  .formulario-local .form-group textarea {
+    padding: 8px 12px;
+    font-size: 0.9rem;
   }
 }

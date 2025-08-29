@@ -5,37 +5,31 @@ import MaterialIcon from '../MaterialIcon';
 import './styles.css';
 
 interface FiltrosUsuarioProps {
-  onFiltroChange: (filtros: {
+  onChange?: (filtros: {
     busca?: string;
     perfil?: string;
     status?: string;
-    curso?: string;
   }) => void;
 }
 
-const FiltrosUsuario = ({ onFiltroChange }: FiltrosUsuarioProps) => {
-  const [busca, setBusca] = useState('');
-  const [perfil, setPerfil] = useState('');
-  const [status, setStatus] = useState('');
-  const [curso, setCurso] = useState('');
+export default function FiltrosUsuario({ onChange }: FiltrosUsuarioProps) {
+  const [filtrosExpanded, setFiltrosExpanded] = useState(false);
+  const [filtros, setFiltros] = useState({
+    busca: '',
+    perfil: '',
+    status: ''
+  });
   const [perfis, setPerfis] = useState<Perfil[]>([]);
-  const [expanded, setExpanded] = useState(false);
+
+  const statusOptions = [
+    { value: '', label: 'Todos os status' },
+    { value: 'ativo', label: 'Ativo' },
+    { value: 'inativo', label: 'Inativo' }
+  ];
 
   useEffect(() => {
     carregarPerfis();
   }, []);
-
-  // Remover onFiltroChange das dependências para evitar loop infinito
-  useEffect(() => {
-    const filtros = {
-      busca: busca.trim() || undefined,
-      perfil: perfil || undefined,
-      status: status || undefined,
-      curso: curso.trim() || undefined,
-    };
-    
-    onFiltroChange(filtros);
-  }, [busca, perfil, status, curso]); // Removido onFiltroChange das dependências
 
   const carregarPerfis = async () => {
     try {
@@ -48,123 +42,142 @@ const FiltrosUsuario = ({ onFiltroChange }: FiltrosUsuarioProps) => {
     }
   };
 
-  const limparFiltros = () => {
-    setBusca('');
-    setPerfil('');
-    setStatus('');
-    setCurso('');
+  const handleFiltroChange = (campo: string, valor: string) => {
+    const novosFiltros = {
+      ...filtros,
+      [campo]: valor
+    };
+    setFiltros(novosFiltros);
+
+    // Converter valores vazios para undefined
+    const filtrosProcessados = {
+      busca: novosFiltros.busca || undefined,
+      perfil: novosFiltros.perfil || undefined,
+      status: novosFiltros.status || undefined
+    };
+
+    onChange?.(filtrosProcessados);
   };
 
-  const temFiltrosAtivos = busca || perfil || status || curso;
+  const limparFiltros = () => {
+    const filtrosLimpos = {
+      busca: '',
+      perfil: '',
+      status: ''
+    };
+    setFiltros(filtrosLimpos);
+    onChange?.({});
+  };
+
+  const getFiltrosAtivos = () => {
+    const ativos = [];
+    if (filtros.busca) ativos.push({ label: `Busca: "${filtros.busca}"`, campo: 'busca' });
+    if (filtros.perfil) {
+      const perfilSelecionado = perfis.find(p => p._id === filtros.perfil);
+      ativos.push({ label: `Perfil: ${perfilSelecionado?.nome || 'Desconhecido'}`, campo: 'perfil' });
+    }
+    if (filtros.status) {
+      const statusSelecionado = statusOptions.find(s => s.value === filtros.status);
+      ativos.push({ label: `Status: ${statusSelecionado?.label || 'Desconhecido'}`, campo: 'status' });
+    }
+    return ativos;
+  };
+
+  const removerFiltro = (campo: string) => {
+    handleFiltroChange(campo, '');
+  };
+
+  const filtrosAtivos = getFiltrosAtivos();
 
   return (
     <div className="filtros-usuario">
       <div className="filtros-header">
-        <h3>
-          <MaterialIcon name="filter_list" />
+        <div className="filtro-busca">
+          <div className="input-with-icon">
+            <MaterialIcon name="search" />
+            <input
+              type="text"
+              placeholder="Buscar usuários por nome ou email..."
+              value={filtros.busca}
+              onChange={(e) => handleFiltroChange('busca', e.target.value)}
+              className="busca-input"
+            />
+          </div>
+        </div>
+
+        <button
+          onClick={() => setFiltrosExpanded(!filtrosExpanded)}
+          className={`btn-expandir-filtros ${filtrosExpanded ? 'expanded' : ''}`}
+        >
+          <MaterialIcon name="tune" />
           Filtros
-        </h3>
-        
-        <div className="filtros-actions">
-          {temFiltrosAtivos && (
-            <button
-              type="button"
-              onClick={limparFiltros}
-              className="btn-limpar"
-              title="Limpar filtros"
-            >
-              <MaterialIcon name="clear_all" />
-              Limpar
-            </button>
+          <MaterialIcon name={filtrosExpanded ? 'expand_less' : 'expand_more'} />
+          {filtrosAtivos.length > 0 && (
+            <span className="filtros-contador">{filtrosAtivos.length}</span>
           )}
-          
-          <button
-            type="button"
-            onClick={() => setExpanded(!expanded)}
-            className="btn-expandir"
-            title={expanded ? 'Recolher filtros' : 'Expandir filtros'}
-          >
-            <MaterialIcon name={expanded ? 'expand_less' : 'expand_more'} />
-          </button>
-        </div>
+        </button>
       </div>
 
-      <div className={`filtros-content ${expanded ? 'expanded' : ''}`}>
-        <div className="filtros-grid">
-          <div className="filtro-group">
-            <label htmlFor="busca">
-              <MaterialIcon name="search" />
-              Buscar por nome ou email
-            </label>
-            <input
-              type="text"
-              id="busca"
-              value={busca}
-              onChange={(e) => setBusca(e.target.value)}
-              placeholder="Digite o nome ou email..."
-            />
+      {filtrosExpanded && (
+        <div className="filtros-expandidos">
+          <div className="filtros-row">
+            <div className="filtro-group">
+              <label>Perfil do Usuário</label>
+              <select
+                value={filtros.perfil}
+                onChange={(e) => handleFiltroChange('perfil', e.target.value)}
+              >
+                <option value="">Todos os perfis</option>
+                {perfis.map(perfil => (
+                  <option key={perfil._id} value={perfil._id}>
+                    {perfil.nome}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="filtro-group">
+              <label>Status do Usuário</label>
+              <select
+                value={filtros.status}
+                onChange={(e) => handleFiltroChange('status', e.target.value)}
+              >
+                {statusOptions.map(option => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
-          <div className="filtro-group">
-            <label htmlFor="perfil">
-              <MaterialIcon name="account_circle" />
-              Perfil
-            </label>
-            <select
-              id="perfil"
-              value={perfil}
-              onChange={(e) => setPerfil(e.target.value)}
-            >
-              <option value="">Todos os perfis</option>
-              {perfis.map((p) => (
-                <option key={p._id} value={p._id}>
-                  {p.nome}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="filtro-group">
-            <label htmlFor="status">
-              <MaterialIcon name="toggle_on" />
-              Status
-            </label>
-            <select
-              id="status"
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-            >
-              <option value="">Todos</option>
-              <option value="ativo">Ativo</option>
-              <option value="inativo">Inativo</option>
-            </select>
-          </div>
-
-          <div className="filtro-group">
-            <label htmlFor="curso">
-              <MaterialIcon name="school" />
-              Curso
-            </label>
-            <input
-              type="text"
-              id="curso"
-              value={curso}
-              onChange={(e) => setCurso(e.target.value)}
-              placeholder="Digite o curso..."
-            />
+          <div className="filtros-actions">
+            <button onClick={limparFiltros} className="btn-limpar">
+              <MaterialIcon name="clear_all" />
+              Limpar Filtros
+            </button>
           </div>
         </div>
-      </div>
+      )}
 
-      {temFiltrosAtivos && (
+      {filtrosAtivos.length > 0 && (
         <div className="filtros-ativos">
-          <span className="filtros-count">
-            {[busca, perfil, status, curso].filter(Boolean).length} filtro(s) ativo(s)
-          </span>
+          <span className="filtros-ativos-label">Filtros ativos:</span>
+          <div className="filtros-tags">
+            {filtrosAtivos.map((filtro, index) => (
+              <div key={index} className="filtro-tag">
+                <span>{filtro.label}</span>
+                <button
+                  onClick={() => removerFiltro(filtro.campo)}
+                  className="remover-filtro"
+                >
+                  <MaterialIcon name="close" />
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>
   );
-};
-
-export default FiltrosUsuario;
+}

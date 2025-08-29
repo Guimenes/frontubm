@@ -120,6 +120,28 @@ export default function ListaLocal({
     return colors[tipo as keyof typeof colors] || 'tipo-aula';
   };
 
+  // Agrupar locais por tipo
+  const locaisAgrupados = locais.reduce((grupos, local) => {
+    const tipo = local.tipoLocal;
+    if (!grupos[tipo]) {
+      grupos[tipo] = [];
+    }
+    grupos[tipo].push(local);
+    return grupos;
+  }, {} as { [key: string]: Local[] });
+
+  // Ordenar os tipos de locais
+  const tiposOrdenados = [
+    'Sala de Aula',
+    'Laboratório', 
+    'Auditório',
+    'Anfiteatro',
+    'Biblioteca',
+    'Pátio',
+    'Quadra',
+    'Espaço'
+  ].filter(tipo => locaisAgrupados[tipo] && locaisAgrupados[tipo].length > 0);
+
   if (loading) {
     return (
       <div className="lista-loading">
@@ -152,55 +174,69 @@ export default function ListaLocal({
         </div>
       ) : (
         <>
-          <div className="local-grid">
-            {locais.map((local) => (
-              <div key={local._id} className="local-card">
-                <div className="local-header">
-                  <div className="local-codigo">
-                    <MaterialIcon name={getTipoIcon(local.tipoLocal)} />
-                    <span>{local.cod}</span>
-                  </div>
-                  <div className={`local-tipo ${getTipoColor(local.tipoLocal)}`}>
-                    {local.tipoLocal}
+          <div className="locais-por-tipo">
+            {tiposOrdenados.map((tipo) => (
+              <div key={tipo} className="secao-tipo-local">
+                <div className="secao-header">
+                  <div className="secao-titulo">
+                    <MaterialIcon name={getTipoIcon(tipo)} />
+                    <h3>{tipo}</h3>
+                    <span className="contador-locais">{locaisAgrupados[tipo].length} {locaisAgrupados[tipo].length === 1 ? 'local' : 'locais'}</span>
                   </div>
                 </div>
+                
+                <div className="local-grid">
+                  {locaisAgrupados[tipo].map((local) => (
+                    <div key={local._id} className="local-card">
+                      <div className="local-header">
+                        <div className="local-codigo">
+                          <MaterialIcon name={getTipoIcon(local.tipoLocal)} />
+                          <span>{local.cod}</span>
+                        </div>
+                        <div className={`local-tipo ${getTipoColor(local.tipoLocal)}`}>
+                          {local.tipoLocal}
+                        </div>
+                      </div>
 
-                <div className="local-content">
-                  <h4 className="local-nome">{local.nome}</h4>
-                  
-                  {local.descricao && (
-                    <div className="local-descricao">
-                      <MaterialIcon name="place" />
-                      <span>{local.descricao}</span>
+                      <div className="local-content">
+                        <h4 className="local-nome">{local.nome}</h4>
+                        
+                        {local.descricao && (
+                          <div className="local-descricao">
+                            <MaterialIcon name="place" />
+                            <span>{local.descricao}</span>
+                          </div>
+                        )}
+                        
+                        <div className="local-capacidade">
+                          <MaterialIcon name="people" />
+                          <span>
+                            {local.tipoLocal === 'Espaço' && local.capacidade >= 999999 
+                              ? 'Capacidade livre' 
+                              : `${local.capacidade} pessoas`
+                            }
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="local-actions">
+                        <button
+                          onClick={() => onEditar(local)}
+                          className="btn-action btn-edit"
+                          title="Editar local"
+                        >
+                          <MaterialIcon name="edit" />
+                        </button>
+                        <button
+                          onClick={() => abrirModalExclusao(local)}
+                          className="btn-action btn-delete"
+                          title="Excluir local"
+                        >
+                          <MaterialIcon name="delete" />
+                        </button>
+                      </div>
                     </div>
-                  )}
-                  
-                  <div className="local-capacidade">
-                    <MaterialIcon name="people" />
-                    <span>
-                      {local.tipoLocal === 'Espaço' && local.capacidade >= 999999 
-                        ? 'Capacidade livre' 
-                        : `${local.capacidade} pessoas`
-                      }
-                    </span>
-                  </div>
-                </div>
-
-                <div className="local-actions">
-                  <button
-                    onClick={() => onEditar(local)}
-                    className="btn-action btn-edit"
-                    title="Editar local"
-                  >
-                    <MaterialIcon name="edit" />
-                  </button>
-                  <button
-                    onClick={() => abrirModalExclusao(local)}
-                    className="btn-action btn-delete"
-                    title="Excluir local"
-                  >
-                    <MaterialIcon name="delete" />
-                  </button>
+                  ))}
                 </div>
               </div>
             ))}

@@ -39,7 +39,7 @@
   padding: 20px;
   transition: all 0.2s ease;
   position: relative;
-  margin-bottom: 0;
+  margin: 0;
 }
 
 .lista-usuario .usuario-card:hover {
@@ -298,5 +298,87 @@
   .lista-usuario .detail-item {
     flex-wrap: wrap;
     gap: 8px;
+  }
+}
+
+/* Estilos para seções de perfil */
+.usuarios-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.secao-tipo-perfil {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.secao-header {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.secao-titulo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.secao-titulo h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.secao-titulo h3 .material-icon {
+  font-size: 1.5rem;
+}
+
+.contador-usuarios {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.secao-tipo-perfil .usuarios-grid {
+  margin: 0;
+  padding: 20px;
+  background: white;
+}
+
+/* Responsividade para seções de perfil */
+@media (max-width: 768px) {
+  .usuarios-container {
+    gap: 12px;
+  }
+  
+  .secao-header {
+    padding: 12px 16px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .secao-titulo h3 {
+    font-size: 1.1rem;
+  }
+  
+  .contador-usuarios {
+    align-self: flex-end;
   }
 }

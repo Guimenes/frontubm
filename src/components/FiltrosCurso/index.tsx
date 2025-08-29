@@ -5,23 +5,13 @@ import './styles.css';
 interface FiltrosCursoProps {
   onChange?: (filtros: {
     busca?: string;
-    status?: string;
   }) => void;
 }
 
 export default function FiltrosCurso({ onChange }: FiltrosCursoProps) {
-  const [filtrosExpanded, setFiltrosExpanded] = useState(false);
   const [filtros, setFiltros] = useState({
-    busca: '',
-    status: ''
+    busca: ''
   });
-
-  const statusOptions = [
-    { value: '', label: 'Todos os status' },
-    { value: 'Ativo', label: 'Ativo' },
-    { value: 'Inativo', label: 'Inativo' },
-    { value: 'Em planejamento', label: 'Em planejamento' }
-  ];
 
   const handleFiltroChange = (campo: string, valor: string) => {
     const novosFiltros = {
@@ -32,26 +22,15 @@ export default function FiltrosCurso({ onChange }: FiltrosCursoProps) {
 
     // Converter valores vazios para undefined
     const filtrosProcessados = {
-      busca: novosFiltros.busca || undefined,
-      status: novosFiltros.status || undefined
+      busca: novosFiltros.busca || undefined
     };
 
     onChange?.(filtrosProcessados);
   };
 
-  const limparFiltros = () => {
-    const filtrosLimpos = {
-      busca: '',
-      status: ''
-    };
-    setFiltros(filtrosLimpos);
-    onChange?.({});
-  };
-
   const getFiltrosAtivos = () => {
     const ativos = [];
     if (filtros.busca) ativos.push({ label: `Busca: "${filtros.busca}"`, campo: 'busca' });
-    if (filtros.status) ativos.push({ label: `Status: ${filtros.status}`, campo: 'status' });
     return ativos;
   };
 
@@ -76,46 +55,7 @@ export default function FiltrosCurso({ onChange }: FiltrosCursoProps) {
             />
           </div>
         </div>
-
-        <button
-          onClick={() => setFiltrosExpanded(!filtrosExpanded)}
-          className={`btn-expandir-filtros ${filtrosExpanded ? 'expanded' : ''}`}
-        >
-          <MaterialIcon name="tune" />
-          Filtros
-          <MaterialIcon name={filtrosExpanded ? 'expand_less' : 'expand_more'} />
-          {filtrosAtivos.length > 0 && (
-            <span className="filtros-contador">{filtrosAtivos.length}</span>
-          )}
-        </button>
       </div>
-
-      {filtrosExpanded && (
-        <div className="filtros-expandidos">
-          <div className="filtros-row">
-            <div className="filtro-group">
-              <label>Status do Curso</label>
-              <select
-                value={filtros.status}
-                onChange={(e) => handleFiltroChange('status', e.target.value)}
-              >
-                {statusOptions.map(option => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div className="filtros-actions">
-            <button onClick={limparFiltros} className="btn-limpar">
-              <MaterialIcon name="clear_all" />
-              Limpar Filtros
-            </button>
-          </div>
-        </div>
-      )}
 
       {filtrosAtivos.length > 0 && (
         <div className="filtros-ativos">

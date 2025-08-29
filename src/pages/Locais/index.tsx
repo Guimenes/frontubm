@@ -57,8 +57,8 @@ const Locais = () => {
 
   return (
     <div className="locais-page">
-      <div className="container">
-        <div className="page-header">
+      <div className="page-header">
+        <div className="container">
           <div className="page-title">
             <h1>
               <MaterialIcon name="location_on" />
@@ -67,7 +67,9 @@ const Locais = () => {
             <p>Gerencie os espaços e locais do seminário</p>
           </div>
         </div>
+      </div>
 
+      <div className="container">
         <div className="page-content">
           <div className="page-actions">
             <button onClick={handleNovoLocal} className="btn btn-primary">
@@ -92,7 +94,8 @@ const Locais = () => {
         isOpen={mostrarFormulario}
         onClose={handleCancelarFormulario}
         title={localParaEditar ? 'Editar Local' : 'Novo Local'}
-        size="large"
+        size="medium"
+        className="modal-locais"
       >
         <FormularioLocal
           localParaEditar={localParaEditar}

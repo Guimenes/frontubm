@@ -5,10 +5,9 @@ import MaterialIcon from '../../components/MaterialIcon';
 import FormularioUsuario from '../../components/FormularioUsuario';
 import ListaUsuario from '../../components/ListaUsuario';
 import FiltrosUsuario from '../../components/FiltrosUsuario';
-import Modal from '../../components/Modal';
+import ModalUsuario from '../../components/ModalUsuario';
 import ContainerNotificacoes from '../../components/ContainerNotificacoes';
 import { useNotificacao } from '../../hooks/useNotificacao';
-import '../../components/Modal/ModalUsuarios.css';
 import './styles.css';
 
 const Usuarios = () => {
@@ -29,13 +28,13 @@ const Usuarios = () => {
   // Bloqueia scroll do body quando modal está aberto
   useEffect(() => {
     if (mostrarFormulario) {
-      document.body.classList.add('modal-open');
+      document.body.classList.add('modal-usuario-open');
     } else {
-      document.body.classList.remove('modal-open');
+      document.body.classList.remove('modal-usuario-open');
     }
 
     return () => {
-      document.body.classList.remove('modal-open');
+      document.body.classList.remove('modal-usuario-open');
     };
   }, [mostrarFormulario]);
 
@@ -123,24 +122,24 @@ const Usuarios = () => {
             )}
           </div>
 
-          <FiltrosUsuario onFiltroChange={handleFiltroChange} />
+          <FiltrosUsuario onChange={handleFiltroChange} />
           
           <ListaUsuario
             filtros={filtros}
             onEditar={handleEditarUsuario}
             atualizar={atualizarLista}
             onAtualizarComplete={handleAtualizarComplete}
+            onSucesso={handleSucesso}
+            onErro={handleErro}
           />
         </div>
       </div>
 
-      {/* Modal para formulário */}
-      <Modal
+      {/* Modal personalizado para usuários */}
+      <ModalUsuario
         isOpen={mostrarFormulario}
         onClose={handleCancelarFormulario}
         title={usuarioParaEditar ? 'Editar Usuário' : 'Novo Usuário'}
-        size="large"
-        className="modal-usuarios"
       >
         <FormularioUsuario
           usuarioParaEditar={usuarioParaEditar}
@@ -149,7 +148,7 @@ const Usuarios = () => {
           onSucesso={handleSucesso}
           onErro={handleErro}
         />
-      </Modal>
+      </ModalUsuario>
 
       {/* Container de Notificações */}
       <ContainerNotificacoes 
