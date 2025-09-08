@@ -398,9 +398,9 @@ const FormularioEvento: React.FC<FormularioEventoProps> = ({
               className={errors.data ? 'error' : ''}
             >
               <option value="">Selecione uma data</option>
+              <option value="2025-10-21">21 de Outubro de 2025</option>
               <option value="2025-10-22">22 de Outubro de 2025</option>
               <option value="2025-10-23">23 de Outubro de 2025</option>
-              <option value="2025-10-24">24 de Outubro de 2025</option>
             </select>
             {errors.data && <span className="error-message">{errors.data}</span>}
           </div>
