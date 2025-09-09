@@ -65,7 +65,7 @@ const FormularioEvento: React.FC<FormularioEventoProps> = ({
   const carregarLocais = async () => {
     setLoadingLocais(true);
     try {
-      const response = await localService.listarLocais();
+      const response = await localService.listarLocais({limit: 1000});
       if (response.success && response.data) {
         setLocais(response.data);
       }
