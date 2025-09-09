@@ -31,7 +31,7 @@ export default function ListaLocal({
   const [localParaExcluir, setLocalParaExcluir] = useState<Local | null>(null);
   const [excluindo, setExcluindo] = useState(false);
 
-  const itemsPorPagina = 12;
+  const itemsPorPagina = 100;
 
   const carregarLocais = async () => {
     try {
