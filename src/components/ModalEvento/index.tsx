@@ -1,3 +1,4 @@
+// ModalEvento.tsx
 import React from 'react';
 import MaterialIcon from '../MaterialIcon';
 import './styles.css';
@@ -17,14 +18,8 @@ const ModalEvento: React.FC<ModalEventoProps> = ({
 }) => {
   if (!isOpen) return null;
 
-  const handleOverlayClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
-  };
-
   return (
-    <div className="modal-evento-overlay" onClick={handleOverlayClick}>
+    <div className="modal-evento-overlay" aria-modal="true" role="dialog">
       <div className="modal-evento-content">
         <div className="modal-evento-header">
           <div className="modal-evento-header-content">
