@@ -17,14 +17,8 @@ const ModalUsuario: React.FC<ModalUsuarioProps> = ({
 }) => {
   if (!isOpen) return null;
 
-  const handleOverlayClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
-  };
-
   return (
-    <div className="modal-usuario-overlay" onClick={handleOverlayClick}>
+    <div className="modal-usuario-overlay" aria-modal="true" role="dialog">
       <div className="modal-usuario-container">
         <div className="modal-usuario-header">
           <div className="modal-usuario-title">
