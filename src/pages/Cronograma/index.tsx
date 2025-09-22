@@ -54,6 +54,13 @@ const Cronograma = () => {
       // Carregar eventos do backend (aumenta o limite para exibir todo o cronograma)
       const responseEventos = await eventoService.listarEventos({ limit: 1000 });
       if (responseEventos.success && responseEventos.data) {
+        console.log('Eventos recebidos do backend:', responseEventos.data.map(e => ({
+          id: e._id,
+          cod: e.cod,
+          cursos: e.cursos,
+          curso: e.curso
+        })));
+        
         // Converter strings de data para objetos Date
         const eventosComDatas = responseEventos.data.map(evento => ({
           ...evento,
@@ -300,6 +307,13 @@ const Cronograma = () => {
 
   // Agrupa eventos por curso, mantendo seção "GERAIS" para sem curso
   const obterGruposPorCurso = () => {
+    console.log('Eventos para agrupar:', obterEventosParaVisualizacao().map(e => ({
+      id: e._id,
+      cod: e.cod,
+      cursos: (e as any).cursos,
+      curso: e.curso
+    })));
+    
     // Se o filtro de curso está definido, retorna apenas um grupo correspondente
     if (filtros.curso === 'GERAL') {
       return [{ 
@@ -328,9 +342,13 @@ const Cronograma = () => {
     // Cursos específicos
     obterEventosParaVisualizacao().forEach(ev => {
       const cursosEvento: any[] = Array.isArray((ev as any).cursos) ? (ev as any).cursos : (ev.curso ? [ev.curso] : []);
+      console.log(`Evento ${ev.cod}: cursosEvento =`, cursosEvento);
+      
       if (cursosEvento.length > 0) {
         cursosEvento.forEach((c: any) => {
           const curso = (typeof c === 'object') ? (c as any) : cursos.find(cc => cc._id === c);
+          console.log(`Processando curso:`, c, 'curso encontrado:', curso);
+          
           if (!curso) return;
           const chave = curso._id || `${curso.cod}-${curso.nome}`;
           if (!mapa.has(chave)) {
@@ -340,6 +358,7 @@ const Cronograma = () => {
         });
       } else {
         // É um evento geral (sem curso)
+        console.log(`Evento ${ev.cod} vai para GERAIS`);
         if (!mapa.has('GERAIS')) {
           mapa.set('GERAIS', { chave: 'GERAIS', titulo: 'Eventos Gerais', eventos: [] });
         }
@@ -353,6 +372,8 @@ const Cronograma = () => {
       if (b.chave === 'GERAIS') return -1;
       return a.titulo.localeCompare(b.titulo, 'pt-BR');
     });
+    
+    console.log('Grupos criados:', grupos.map(g => ({ chave: g.chave, titulo: g.titulo, eventos: g.eventos.length })));
     return grupos;
   };
 

@@ -348,9 +348,17 @@ const FormularioEvento: React.FC<FormularioEventoProps> = ({
         // O código será gerado automaticamente pelo backend
       };
 
-      // Garantir que não enviamos campos legados
-      delete (dadosEvento as any).curso;
+      // Compatibilidade com backends legados: enviar também o campo antigo `curso`
+      // usando o primeiro curso selecionado (se houver). O backend atual ignora/convive bem.
+      if (Array.isArray(formData.cursos) && formData.cursos.length > 0) {
+        (dadosEvento as any).curso = formData.cursos[0];
+      } else {
+        delete (dadosEvento as any).curso;
+      }
+      // Campo antigo não utilizado
       delete (dadosEvento as any).atrelarCurso;
+
+      console.log('Dados a serem enviados para o backend:', dadosEvento);
 
       let response;
       if (evento?._id) {
