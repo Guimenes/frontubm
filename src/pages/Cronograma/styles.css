@@ -601,6 +601,13 @@
   overflow: visible;
 }
 
+.eventos-simultaneos {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  overflow: visible;
+}
+
 .evento-grade {
   height: 100%;
   border-radius: 12px;
@@ -1086,8 +1093,44 @@
 .mobile-eventos-lista {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
   animation: slideUp 0.4s ease-out;
+}
+
+.mobile-horario-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.mobile-horario-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 6px;
+  border-bottom: 1px dashed var(--border-color);
+}
+
+.mobile-horario-time {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  background: rgba(139, 21, 56, 0.08);
+  padding: 4px 10px;
+  border-radius: 16px;
+}
+
+.mobile-horario-count {
+  font-size: 0.75rem;
+  color: var(--text-light);
+  font-weight: 500;
+}
+
+.mobile-eventos-simultaneous {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 @keyframes slideUp {

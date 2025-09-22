@@ -156,6 +156,7 @@ export const eventoService = {
     data?: string;
     search?: string;
     local?: string;
+    // Filtro por curso: aceita id único por compatibilidade; backend suporta também `cursos`
     curso?: string;
   }): Promise<ApiResponse<Evento[]>> {
     try {

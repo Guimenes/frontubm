@@ -305,6 +305,183 @@ select {
   gap: 4px;
 }
 
+/* Novo seletor de cursos */
+.cursos-selector {
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--background-light);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.cursos-header {
+  padding: 16px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cursos-search {
+  width: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.cursos-search .material-icon {
+  position: absolute;
+  left: 12px;
+  color: var(--text-light);
+}
+
+.cursos-search input {
+  width: 100%;
+  padding: 12px 16px 12px 40px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+.cursos-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.cursos-actions .btn {
+  font-size: 0.9rem;
+  padding: 8px 16px;
+  min-width: unset;
+}
+
+.checkbox-inline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  color: var(--text-dark);
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox-inline input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary-color);
+}
+
+.cursos-body {
+  padding: 0;
+  min-height: 100px;
+  max-height: 300px;
+  overflow-y: auto;
+  background: white;
+}
+
+.cursos-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.curso-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.2s;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.curso-item:last-child {
+  border-bottom: none;
+}
+
+.curso-item:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.curso-item.selected {
+  background: rgba(139, 21, 56, 0.05);
+}
+
+.curso-item input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary-color);
+}
+
+.curso-cod {
+  font-weight: 600;
+  color: var(--text-dark);
+  min-width: 80px;
+}
+
+.curso-nome {
+  color: var(--text-light);
+  font-size: 0.95rem;
+}
+
+.cursos-footer {
+  padding: 16px;
+  border-top: 1px solid var(--border-color);
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 32px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px 4px 12px;
+  background: var(--primary-color);
+  color: white;
+  border-radius: 16px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.chip-remove {
+  background: none;
+  border: none;
+  padding: 2px;
+  color: white;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.chip-remove:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.empty-state {
+  padding: 32px 16px;
+  text-align: center;
+  color: var(--text-light);
+  font-style: italic;
+}
+
+.hint {
+  color: var(--text-light);
+  font-size: 0.875rem;
+  font-style: italic;
+}
+
 .banner-info {
   display: flex;
   align-items: center;
