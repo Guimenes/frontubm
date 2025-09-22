@@ -145,25 +145,30 @@ const Cronograma = () => {
   const obterHorariosUnicos = (base?: Evento[]) => {
     const eventosParaHorarios = base ?? obterEventosParaVisualizacao();
     const horariosSet = new Set<string>();
-    
+
     eventosParaHorarios.forEach(evento => {
       const inicioMinutos = evento.hora.getHours() * 60 + evento.hora.getMinutes();
       const duracaoEvento = evento.duracao || 60;
       const fimMinutos = inicioMinutos + duracaoEvento;
-      
-      // Gera todos os slots de 30 em 30 minutos do início ao fim
-      // Para eventos com duração exata em horas, inclui o slot final
-      for (let minutos = inicioMinutos; minutos <= fimMinutos; minutos += 30) {
-        // Para o último slot, só inclui se for exatamente no horário final ou se a duração não for múltipla de 30
-        if (minutos === fimMinutos || minutos < fimMinutos) {
-          const horas = Math.floor(minutos / 60);
-          const mins = minutos % 60;
-          const horarioFormatado = `${horas}:${mins.toString().padStart(2, '0')}`;
-          horariosSet.add(horarioFormatado);
-        }
+
+      // Gera slots de 30 em 30 minutos cobrindo todo o período do evento
+      for (let minutos = inicioMinutos; minutos < fimMinutos; minutos += 30) {
+        const horas = Math.floor(minutos / 60);
+        const mins = minutos % 60;
+        const horarioFormatado = `${horas}:${mins.toString().padStart(2, '0')}`;
+        horariosSet.add(horarioFormatado);
+      }
+
+      // Sempre inclui o horário final se for diferente do último slot gerado
+      const ultimoSlotMinutos = inicioMinutos + Math.floor((duracaoEvento - 1) / 30) * 30;
+      if (ultimoSlotMinutos < fimMinutos) {
+        const horas = Math.floor(fimMinutos / 60);
+        const mins = fimMinutos % 60;
+        const horarioFinal = `${horas}:${mins.toString().padStart(2, '0')}`;
+        horariosSet.add(horarioFinal);
       }
     });
-    
+
     return Array.from(horariosSet).sort((a, b) => {
       const [aHora, aMin] = a.split(':').map(Number);
       const [bHora, bMin] = b.split(':').map(Number);
@@ -176,26 +181,20 @@ const Cronograma = () => {
     return eventosParaBusca.filter(evento => {
       const eventoDia = evento.data.toDateString();
       if (eventoDia !== dia) return false;
-      
+
       // Converte horário do slot para minutos desde o início do dia
       const [slotHora, slotMinuto] = horario.split(':').map(Number);
       const slotMinutosDoDia = slotHora * 60 + slotMinuto;
-      
+
       // Converte horário do evento para minutos desde o início do dia
       const eventoMinutosDoDia = evento.hora.getHours() * 60 + evento.hora.getMinutes();
-      
+
       // Calcula o fim do evento em minutos
       const duracaoEvento = evento.duracao || 60;
       const eventoFimMinutosDoDia = eventoMinutosDoDia + duracaoEvento;
-      
-      // Verifica se o slot está dentro do período do evento
-      // Para eventos com duração >= 60 min, inclui o slot final exato
-      // Para eventos < 60 min, não inclui o slot final
-      if (duracaoEvento >= 60) {
-        return slotMinutosDoDia >= eventoMinutosDoDia && slotMinutosDoDia <= eventoFimMinutosDoDia;
-      } else {
-        return slotMinutosDoDia >= eventoMinutosDoDia && slotMinutosDoDia < eventoFimMinutosDoDia;
-      }
+
+      // Verifica se o slot está dentro do período do evento (inclusive)
+      return slotMinutosDoDia >= eventoMinutosDoDia && slotMinutosDoDia < eventoFimMinutosDoDia;
     });
   };
 
@@ -216,35 +215,28 @@ const Cronograma = () => {
     const inicioMinutos = evento.hora.getHours() * 60 + evento.hora.getMinutes();
     const duracaoEvento = evento.duracao || 60;
     const fimMinutos = inicioMinutos + duracaoEvento;
-    
+
     // Encontra o índice do slot inicial
     const horarioInicial = `${evento.hora.getHours()}:${evento.hora.getMinutes().toString().padStart(2, '0')}`;
     const indiceInicial = horariosDisponiveis.indexOf(horarioInicial);
-    
+
+    if (indiceInicial === -1) return 1; // fallback
+
     // Conta quantos slots o evento deve ocupar visualmente
     let slotsVisuais = 0;
     for (let i = indiceInicial; i < horariosDisponiveis.length; i++) {
       const [hora, minuto] = horariosDisponiveis[i].split(':').map(Number);
       const slotMinutos = hora * 60 + minuto;
-      
-      // Para eventos >= 60 min, inclui o slot final exato
-      // Para eventos < 60 min, não inclui o slot final
-      if (duracaoEvento >= 60) {
-        if (slotMinutos <= fimMinutos) {
-          slotsVisuais++;
-        } else {
-          break;
-        }
-      } else {
-        if (slotMinutos < fimMinutos) {
-          slotsVisuais++;
-        } else {
-          break;
-        }
+
+      // O evento ocupa este slot se o slot estiver dentro do intervalo do evento
+      if (slotMinutos >= inicioMinutos && slotMinutos < fimMinutos) {
+        slotsVisuais++;
+      } else if (slotMinutos >= fimMinutos) {
+        break; // Passou do fim do evento
       }
     }
-    
-    return slotsVisuais;
+
+    return Math.max(slotsVisuais, 1); // Garante pelo menos 1 slot
   };
 
   const obterClasseCard = (evento: Evento, slotsOcupados: number, diasTotal: number) => {
@@ -536,32 +528,20 @@ const Cronograma = () => {
                               <div key={`${grupo.chave}-${dia}-${horario}`} className="grade-cell grade-event-cell">
                                 {eventosNoInicio.length > 0 ? (
                                   <div className="eventos-simultaneos">
-                                    {eventosNoInicio.map((evento, index) => {
+                                    {eventosNoInicio.map((evento) => {
                                       const slotsOcupados = calcularSlotsOcupados(evento);
                                       const slotsVisuais = calcularSlotsVisuais(evento, horariosGrupo);
-                                      // Calcula altura com base no número de eventos simultâneos
-                                      const alturaBase = slotsVisuais * 120 + (slotsVisuais - 1) * 2;
-                                      const altura = eventosNoInicio.length > 1 
-                                        ? alturaBase / eventosNoInicio.length - (2 * (eventosNoInicio.length - 1)) 
-                                        : alturaBase;
-                                      
+
                                       return (
                                         <div
                                           key={evento._id}
-                                          className={obterClasseCard(evento, slotsOcupados, diasTotal)}
+                                          className={`${obterClasseCard(evento, slotsOcupados, diasTotal)} ${eventosNoInicio.length > 1 ? 'evento-simultaneo' : ''}`}
                                           onClick={() => abrirDetalhes(evento)}
                                           role="button"
                                           tabIndex={0}
                                           onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') abrirDetalhes(evento); }}
                                           style={{
-                                            height: `${altura}px`, 
-                                            position: 'absolute',
-                                            top: `${index * (altura + 4)}px`,
-                                            left: 0,
-                                            right: 0,
-                                            zIndex: 10,
-                                            marginRight: '2px',
-                                            marginBottom: '2px'
+                                            height: `${slotsVisuais * 120 + (slotsVisuais - 1) * 2}px`
                                           }}
                                         >
                                           <div className="evento-grade-header">
@@ -576,19 +556,19 @@ const Cronograma = () => {
                                             </span>
                                             <span className="evento-codigo">#{evento.cod}</span>
                                           </div>
-                                          
+
                                           <div className="evento-grade-tema" title={evento.tema}>
                                             {evento.tema}
                                           </div>
-                                          
+
                                           <div className="evento-grade-info">
                                             <div className="evento-grade-local" title={evento.sala}>
                                               <MaterialIcon name="location_on" size="small" />
                                               <span>{evento.sala}</span>
                                             </div>
                                             {(slotsOcupados > 2 || diasTotal <= 2) && (
-                                              <div 
-                                                className="evento-grade-palestrante" 
+                                              <div
+                                                className="evento-grade-palestrante"
                                                 title={evento.palestrante || evento.autores[0]}
                                               >
                                                 <MaterialIcon name="person" size="small" />
@@ -596,12 +576,7 @@ const Cronograma = () => {
                                               </div>
                                             )}
                                           </div>
-                                          
-                                          <div className="evento-grade-duracao">
-                                            <MaterialIcon name="schedule" size="small" />
-                                            <span>{evento.duracao || 60} min</span>
-                                          </div>
-                                          
+
                                           <div className="evento-grade-tipo">
                                             {evento.tipoEvento}
                                           </div>
@@ -629,32 +604,11 @@ const Cronograma = () => {
               {/* Visualização Mobile - Um Dia por Vez */}
               <div className="mobile-view">
                 {obterGruposPorCurso().map((grupo) => {
-                  const eventosDoDia = grupo.eventos.filter(evento => 
+                  const eventosDoDia = grupo.eventos.filter(evento =>
                     evento.data.toDateString() === diaAtualMobile
                   );
-                  
+
                   if (eventosDoDia.length === 0) return null;
-
-                  // Agrupar eventos por horário para o mobile
-                  const eventosPorHorario = eventosDoDia.reduce((acc, evento) => {
-                    const horarioKey = evento.hora.toLocaleTimeString('pt-BR', { 
-                      hour: '2-digit', 
-                      minute: '2-digit' 
-                    });
-                    
-                    if (!acc[horarioKey]) {
-                      acc[horarioKey] = [];
-                    }
-                    acc[horarioKey].push(evento);
-                    return acc;
-                  }, {} as {[key: string]: Evento[]});
-
-                  // Ordenar horários
-                  const horariosOrdenados = Object.keys(eventosPorHorario).sort((a, b) => {
-                    const [aHora, aMin] = a.split(':').map(Number);
-                    const [bHora, bMin] = b.split(':').map(Number);
-                    return (aHora * 60 + aMin) - (bHora * 60 + bMin);
-                  });
 
                   return (
                     <div key={grupo.chave} className="mobile-grupo">
@@ -664,64 +618,48 @@ const Cronograma = () => {
                       </div>
 
                       <div className="mobile-eventos-lista">
-                        {horariosOrdenados.map(horario => (
-                          <div key={`${grupo.chave}-${horario}`} className="mobile-horario-grupo">
-                            <div className="mobile-horario-header">
-                              <div className="mobile-horario-time">{horario}</div>
-                              <div className="mobile-horario-count">
-                                {eventosPorHorario[horario].length > 1 ? 
-                                  `${eventosPorHorario[horario].length} eventos simultâneos` : 
-                                  '1 evento'}
+                        {eventosDoDia
+                          .sort((a, b) => a.hora.getTime() - b.hora.getTime())
+                          .map(evento => (
+                            <div
+                              key={evento._id}
+                              className={`mobile-evento-card ${evento.tipoEvento.toLowerCase().replace(/\s+/g, '-')}`}
+                              onClick={() => abrirDetalhes(evento)}
+                            >
+                              <div className="mobile-evento-header">
+                                <div className="mobile-evento-hora">
+                                  {evento.hora.toLocaleTimeString('pt-BR', {
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                  })}
+                                </div>
+                              </div>
+
+                              <div className="mobile-evento-titulo">
+                                {evento.tema}
+                              </div>
+
+                              <div className="mobile-evento-info">
+                                <div className="mobile-evento-local">
+                                  <MaterialIcon name="location_on" size="small" />
+                                  {evento.sala}
+                                </div>
+                                <div className="mobile-evento-tipo">
+                                  {evento.tipoEvento}
+                                </div>
+                              </div>
+
+                              <div className="mobile-evento-badge">
+                                {(() => {
+                                  const cursosEvento: any[] = Array.isArray((evento as any).cursos) ? (evento as any).cursos : (evento.curso ? [evento.curso] : []);
+                                  if (cursosEvento.length === 0) return 'GERAL';
+                                  const primeiro = cursosEvento[0];
+                                  const obj = typeof primeiro === 'object' ? (primeiro as any) : cursos.find(c => c._id === primeiro);
+                                  return obj ? obj.cod : 'CURSO';
+                                })()}
                               </div>
                             </div>
-                            
-                            <div className="mobile-eventos-simultaneous">
-                              {eventosPorHorario[horario].map(evento => (
-                                <div
-                                  key={evento._id}
-                                  className={`mobile-evento-card ${evento.tipoEvento.toLowerCase().replace(/\s+/g, '-')}`}
-                                  onClick={() => abrirDetalhes(evento)}
-                                >
-                                  <div className="mobile-evento-header">
-                                    <div className="mobile-evento-hora">
-                                      {evento.hora.toLocaleTimeString('pt-BR', { 
-                                        hour: '2-digit', 
-                                        minute: '2-digit' 
-                                      })}
-                                    </div>
-                                    <div className="mobile-evento-duracao">
-                                      {evento.duracao || 60} min
-                                    </div>
-                                  </div>
-                                  
-                                  <div className="mobile-evento-titulo">
-                                    {evento.tema}
-                                  </div>
-                                  
-                                  <div className="mobile-evento-info">
-                                    <div className="mobile-evento-local">
-                                      <MaterialIcon name="location_on" size="small" />
-                                      {evento.sala}
-                                    </div>
-                                    <div className="mobile-evento-tipo">
-                                      {evento.tipoEvento}
-                                    </div>
-                                  </div>
-                                  
-                                  <div className="mobile-evento-badge">
-                                    {(() => {
-                                      const cursosEvento: any[] = Array.isArray((evento as any).cursos) ? (evento as any).cursos : (evento.curso ? [evento.curso] : []);
-                                      if (cursosEvento.length === 0) return 'GERAL';
-                                      const primeiro = cursosEvento[0];
-                                      const obj = typeof primeiro === 'object' ? (primeiro as any) : cursos.find(c => c._id === primeiro);
-                                      return obj ? obj.cod : 'CURSO';
-                                    })()}
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        ))}
+                          ))}
                       </div>
                     </div>
                   );
