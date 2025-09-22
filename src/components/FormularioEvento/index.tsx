@@ -25,8 +25,7 @@ const FormularioEvento: React.FC<FormularioEventoProps> = ({
     orientador: '', // Novo campo orientador
     sala: '',
     tipoEvento: 'Apresentação de Trabalhos' as 'Palestra Principal' | 'Apresentação de Trabalhos' | 'Oficina' | 'Banner',
-    atrelarCurso: true, // Agora ativo por padrão
-    curso: '', // ID do curso selecionado
+    cursos: [] as string[], // IDs dos cursos selecionados (opcional)
     resumo: ''
   });
 
@@ -37,6 +36,8 @@ const FormularioEvento: React.FC<FormularioEventoProps> = ({
   const [loadingCursos, setLoadingCursos] = useState(false);
   const [errors, setErrors] = useState<any>({});
   const [verificandoConflito, setVerificandoConflito] = useState(false);
+  const [buscaCurso, setBuscaCurso] = useState('');
+  const [eventoGeral, setEventoGeral] = useState(false);
 
   useEffect(() => {
     if (evento) {
@@ -53,10 +54,15 @@ const FormularioEvento: React.FC<FormularioEventoProps> = ({
         orientador: evento.orientador || '',
         sala: evento.sala || '',
         tipoEvento: evento.tipoEvento || 'Apresentação de Trabalhos',
-        atrelarCurso: !!evento.curso, // Se tem curso, atrelarCurso é true, mas sempre true por padrão agora
-        curso: typeof evento.curso === 'string' ? evento.curso : (evento.curso?._id || ''),
+        cursos: Array.isArray((evento as any).cursos)
+          ? (evento as any).cursos.map((c: any) => (typeof c === 'string' ? c : c?._id)).filter(Boolean)
+          : (evento.curso ? [typeof evento.curso === 'string' ? evento.curso : (evento.curso as any)?._id].filter(Boolean) : []),
         resumo: evento.resumo || ''
       });
+      const temCursos = Array.isArray((evento as any).cursos)
+        ? (evento as any).cursos.length > 0
+        : !!evento.curso;
+      setEventoGeral(!temCursos);
     }
     carregarLocais();
     carregarCursos();
@@ -91,31 +97,37 @@ const FormularioEvento: React.FC<FormularioEventoProps> = ({
     }
   };
 
-  const verificarConflitoHorario = async (data: string, hora: string, curso: string): Promise<boolean> => {
-    if (!data || !hora || !curso) return false;
+  const verificarConflitoHorario = async (data: string, hora: string, cursosSel: string[], sala: string): Promise<boolean> => {
+    if (!data || !hora || !cursosSel || cursosSel.length === 0 || !sala) return false;
 
     setVerificandoConflito(true);
     try {
-      // Buscar eventos existentes para o mesmo curso, data e hora
-      const response = await eventoService.listarEventos({
-        data,
-        curso,
-        limit: 1000 // Buscar todos os eventos para ter certeza
-      });
-
-      if (response.success && response.data) {
-        const eventosConflitantes = response.data.filter((eventoExistente: Evento) => {
-          // Se estamos editando, excluir o próprio evento da verificação
-          if (evento?._id && eventoExistente._id === evento._id) {
-            return false;
-          }
-
-          // Verificar se é o mesmo horário
-          const horaExistente = new Date(eventoExistente.hora).toTimeString().slice(0, 5);
-          return horaExistente === hora;
+      // Buscar eventos existentes para cada curso selecionado, na mesma data e hora
+      for (const curso of cursosSel) {
+        const response = await eventoService.listarEventos({
+          data,
+          curso,
+          local: sala, // Adiciona filtro por local
+          limit: 1000 // Buscar todos os eventos para ter certeza
         });
 
-        return eventosConflitantes.length > 0;
+        if (response.success && response.data) {
+          const eventosConflitantes = response.data.filter((eventoExistente: Evento) => {
+            // Se estamos editando, excluir o próprio evento da verificação
+            if (evento?._id && eventoExistente._id === evento._id) {
+              return false;
+            }
+
+            // Verificar se é o mesmo horário e local
+            const horaExistente = new Date(eventoExistente.hora).toTimeString().slice(0, 5);
+            const mesmoHorario = horaExistente === hora;
+            const mesmoLocal = eventoExistente.sala === sala;
+            
+            return mesmoHorario && mesmoLocal;
+          });
+
+          if (eventosConflitantes.length > 0) return true;
+        }
       }
     } catch (error) {
       console.error('Erro ao verificar conflito:', error);
@@ -135,11 +147,8 @@ const FormularioEvento: React.FC<FormularioEventoProps> = ({
       [name]: type === 'checkbox' ? checked : value
     };
     
-    // Se desmarcou "atrelar curso", limpar o curso selecionado
-    if (name === 'atrelarCurso' && !checked) {
-      newFormData.curso = '';
-    }
-    
+    // cursos agora são tratados pelos handlers dedicados (checkboxes)
+
     // Se mudou o tipo de evento para "Palestra Principal", limpar autores e orientador
     if (name === 'tipoEvento' && value === 'Palestra Principal') {
       newFormData.autores = [''];
@@ -156,14 +165,15 @@ const FormularioEvento: React.FC<FormularioEventoProps> = ({
       }));
     }
 
-    // Verificar conflito de horário quando data, hora ou curso mudarem
-    if ((name === 'data' || name === 'hora' || name === 'curso') && 
-        newFormData.data && newFormData.hora && newFormData.curso) {
+    // Verificar conflito de horário quando data, hora, cursos ou sala mudarem
+  if ((name === 'data' || name === 'hora' || name === 'sala') && 
+        newFormData.data && newFormData.hora && newFormData.cursos && newFormData.cursos.length > 0 && newFormData.sala) {
       
       const temConflito = await verificarConflitoHorario(
         newFormData.data, 
         newFormData.hora, 
-        newFormData.curso
+        newFormData.cursos,
+        newFormData.sala
       );
 
       if (temConflito) {
@@ -177,6 +187,55 @@ const FormularioEvento: React.FC<FormularioEventoProps> = ({
           conflito: ''
         }));
       }
+    }
+  };
+
+  // Handlers de cursos (checkboxes)
+  const cursosFiltrados = cursos.filter(c => {
+    if (!buscaCurso.trim()) return true;
+    const termo = buscaCurso.toLowerCase();
+    return c.nome.toLowerCase().includes(termo) || (c.cod || '').toLowerCase().includes(termo);
+  });
+
+  const toggleCurso = async (cursoId: string) => {
+    const selecionados = new Set(formData.cursos);
+    if (selecionados.has(cursoId)) {
+      selecionados.delete(cursoId);
+    } else {
+      selecionados.add(cursoId);
+    }
+    const novos = Array.from(selecionados);
+    setFormData(prev => ({ ...prev, cursos: novos }));
+    setEventoGeral(novos.length === 0);
+
+    // Revalida conflito se temos data/hora
+    if (formData.data && formData.hora && novos.length > 0 && formData.sala) {
+      const temConflito = await verificarConflitoHorario(formData.data, formData.hora, novos, formData.sala);
+      setErrors((prev: any) => ({ ...prev, conflito: temConflito ? 'Já existe um evento para este curso neste local e horário' : '' }));
+    } else {
+      setErrors((prev: any) => ({ ...prev, conflito: '' }));
+    }
+  };
+
+  const selecionarTodos = () => {
+    const todosIds = cursosFiltrados.map(c => c._id!).filter(Boolean);
+    setFormData(prev => ({ ...prev, cursos: todosIds }));
+    setEventoGeral(todosIds.length === 0);
+  };
+
+  const limparCursos = () => {
+    setFormData(prev => ({ ...prev, cursos: [] }));
+    setEventoGeral(true);
+  setErrors((prev: any) => ({ ...prev, conflito: '' }));
+  };
+
+  const toggleEventoGeral = () => {
+    const novo = !eventoGeral;
+    setEventoGeral(novo);
+    if (novo) {
+      // Limpa cursos quando marcar evento geral
+      setFormData(prev => ({ ...prev, cursos: [] }));
+  setErrors((prev: any) => ({ ...prev, conflito: '' }));
     }
   };
 
@@ -222,10 +281,7 @@ const FormularioEvento: React.FC<FormularioEventoProps> = ({
     if (!formData.tema.trim()) novosErros.tema = 'Tema é obrigatório';
     if (!formData.sala) novosErros.sala = 'Local é obrigatório';
 
-    // Validação do curso - agora sempre obrigatório
-    if (!formData.curso) {
-      novosErros.curso = 'Selecione um curso';
-    }
+    // Cursos são opcionais agora; se nenhum selecionado, será evento geral
 
     // Validações específicas por tipo de evento
     if (formData.tipoEvento === 'Palestra Principal') {
@@ -241,15 +297,16 @@ const FormularioEvento: React.FC<FormularioEventoProps> = ({
     }
 
     // Verificar conflito de horário se todos os campos necessários estão preenchidos
-    if (formData.data && formData.hora && formData.curso) {
+    if (formData.data && formData.hora && formData.cursos && formData.cursos.length > 0 && formData.sala) {
       const temConflito = await verificarConflitoHorario(
         formData.data, 
         formData.hora, 
-        formData.curso
+        formData.cursos,
+        formData.sala
       );
 
       if (temConflito) {
-        novosErros.conflito = 'Já existe um evento para este curso no mesmo dia e horário';
+        novosErros.conflito = 'Já existe um evento neste local e horário';
       }
     }
 
@@ -278,7 +335,7 @@ const FormularioEvento: React.FC<FormularioEventoProps> = ({
       const horaNum = Number(horaStr);
       const minutoNum = Number(minutoStr);
 
-      const dadosEvento = {
+      const dadosEvento: any = {
         ...formData,
         // Data do evento à meia-noite local
         data: new Date(ano, mes, dia, 0, 0, 0, 0),
@@ -286,10 +343,14 @@ const FormularioEvento: React.FC<FormularioEventoProps> = ({
         hora: new Date(2000, 0, 1, horaNum, minutoNum, 0, 0),
         // Filtrar autores vazios
         autores: formData.autores.filter(autor => autor.trim() !== ''),
-        // Sempre incluir curso (agora é obrigatório)
-        curso: formData.curso
+        // Enviar cursos selecionados (pode ser vazio para evento geral)
+        cursos: formData.cursos
         // O código será gerado automaticamente pelo backend
       };
+
+      // Garantir que não enviamos campos legados
+      delete (dadosEvento as any).curso;
+      delete (dadosEvento as any).atrelarCurso;
 
       let response;
       if (evento?._id) {
@@ -366,24 +427,71 @@ const FormularioEvento: React.FC<FormularioEventoProps> = ({
 
         <div className="formulario-row">
           <div className="form-group">
-            <label htmlFor="curso">Curso *</label>
-            <select
-              id="curso"
-              name="curso"
-              value={formData.curso}
-              onChange={handleChange}
-              className={errors.curso ? 'error' : ''}
-              disabled={loadingCursos}
-            >
-              <option value="">Selecione um curso</option>
-              {cursos.map(curso => (
-                <option key={curso._id} value={curso._id}>
-                  {curso.nome} ({curso.cod})
-                </option>
-              ))}
-            </select>
-            {loadingCursos && <span className="loading-message">Carregando cursos...</span>}
-            {errors.curso && <span className="error-message">{errors.curso}</span>}
+            <label>Cursos (opcional)</label>
+            <div className="cursos-selector">
+              <div className="cursos-header">
+                <div className="input-with-icon cursos-search">
+                  <MaterialIcon name="search" />
+                  <input
+                    type="text"
+                    placeholder="Buscar por nome ou código do curso..."
+                    value={buscaCurso}
+                    onChange={(e) => setBuscaCurso(e.target.value)}
+                    disabled={loadingCursos}
+                  />
+                </div>
+                <div className="cursos-actions">
+                  <button type="button" className="btn btn-secondary" onClick={selecionarTodos} disabled={loadingCursos || cursosFiltrados.length === 0}>
+                    <MaterialIcon name="done_all" size="small" /> Selecionar todos
+                  </button>
+                  <button type="button" className="btn btn-secondary" onClick={limparCursos} disabled={loadingCursos || formData.cursos.length === 0}>
+                    <MaterialIcon name="clear" size="small" /> Limpar
+                  </button>
+                  <label className="checkbox-inline">
+                    <input type="checkbox" checked={eventoGeral} onChange={toggleEventoGeral} /> Evento geral
+                  </label>
+                </div>
+              </div>
+
+              <div className="cursos-body">
+                {loadingCursos ? (
+                  <div className="loading-message">Carregando cursos...</div>
+                ) : cursosFiltrados.length === 0 ? (
+                  <div className="empty-state">Nenhum curso encontrado</div>
+                ) : (
+                  <div className="cursos-list">
+                    {cursosFiltrados.map(c => {
+                      const selected = formData.cursos.includes(c._id!);
+                      return (
+                        <label key={c._id} className={`curso-item ${selected ? 'selected' : ''}`}>
+                          <input type="checkbox" checked={selected} onChange={() => toggleCurso(c._id!)} disabled={eventoGeral} />
+                          <span className="curso-cod">{c.cod}</span>
+                          <span className="curso-nome">{c.nome}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
+              <div className="cursos-footer">
+                <div className="chips">
+                  {formData.cursos.map(id => {
+                    const c = cursos.find(cc => cc._id === id);
+                    if (!c) return null;
+                    return (
+                      <span key={id} className="chip">
+                        <span className="chip-label">{c.cod}</span>
+                        <button type="button" className="chip-remove" onClick={() => toggleCurso(id)}>
+                          <MaterialIcon name="close" size="small" />
+                        </button>
+                      </span>
+                    );
+                  })}
+                  {formData.cursos.length === 0 && <span className="hint">Sem cursos selecionados — este será um Evento Geral.</span>}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 

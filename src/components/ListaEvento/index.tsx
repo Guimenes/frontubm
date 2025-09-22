@@ -250,20 +250,18 @@ const ListaEvento: React.FC<ListaEventoProps> = ({ onEditar, onAtualizar, atuali
               </>
             )}
 
-            {evento.curso && (
+            {(Array.isArray((evento as any).cursos) && (evento as any).cursos.length > 0) || evento.curso ? (
               <div className="info-item">
                 <MaterialIcon name="school" size="small" />
                 <span>
-                  <strong>Curso:</strong> {
-                    typeof evento.curso === 'object' 
-                      ? `${evento.curso.nome} (${evento.curso.cod})`
-                      : evento.curso
+                  <strong>{Array.isArray((evento as any).cursos) ? 'Cursos' : 'Curso'}:</strong> {
+                    Array.isArray((evento as any).cursos)
+                      ? (evento as any).cursos.map((c: any) => typeof c === 'object' ? `${c.nome} (${c.cod})` : c).join(', ')
+                      : (typeof evento.curso === 'object' ? `${(evento.curso as any).nome} (${(evento.curso as any).cod})` : (evento.curso as any))
                   }
                 </span>
               </div>
-            )}
-
-            {!evento.curso && (
+            ) : (
               <div className="info-item">
                 <MaterialIcon name="public" size="small" />
                 <span>
@@ -330,9 +328,23 @@ const ListaEvento: React.FC<ListaEventoProps> = ({ onEditar, onAtualizar, atuali
   let eventosPorCurso: Record<string, Evento[]> | null = null;
   if (filtros?.groupByCurso && eventos.length > 0) {
     eventosPorCurso = eventos.reduce((acc: Record<string, Evento[]>, ev) => {
-      const chave = ev.curso && typeof ev.curso === 'object' ? `${ev.curso.nome} (${ev.curso.cod})` : ev.curso ? String(ev.curso) : 'GERAIS';
-      if (!acc[chave]) acc[chave] = [];
-      acc[chave].push(ev);
+      // Verifica se o evento tem cursos[] ou curso legado
+      const cursosDoEvento = Array.isArray((ev as any).cursos) && (ev as any).cursos.length > 0 
+        ? (ev as any).cursos 
+        : (ev.curso ? [ev.curso] : []);
+      
+      if (cursosDoEvento.length === 0) {
+        // É um evento geral
+        if (!acc['GERAIS']) acc['GERAIS'] = [];
+        acc['GERAIS'].push(ev);
+      } else {
+        // Adiciona o evento em cada curso a que pertence
+        cursosDoEvento.forEach((c: any) => {
+          const chave = typeof c === 'object' ? `${c.nome} (${c.cod})` : c ? String(c) : 'GERAIS';
+          if (!acc[chave]) acc[chave] = [];
+          if (!acc[chave].includes(ev)) acc[chave].push(ev);
+        });
+      }
       return acc;
     }, {});
   }

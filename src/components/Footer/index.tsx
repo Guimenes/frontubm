@@ -20,7 +20,7 @@ const Footer = () => {
     const timer = setTimeout(() => {
       // Verifica se é a primeira visita do usuário
       const hasVisited = localStorage.getItem('ubm-system-visited');
-      const currentVersion = '1.1.1';
+      const currentVersion = '1.1.2';
       const lastSeenVersion = localStorage.getItem('ubm-last-seen-version');
       
       // Mostra o modal se:
@@ -73,7 +73,7 @@ const Footer = () => {
     setShowReleaseNotes(false);
     // Marca que o usuário visitou e viu a versão atual
     localStorage.setItem('ubm-system-visited', 'true');
-    localStorage.setItem('ubm-last-seen-version', '1.1.1');
+    localStorage.setItem('ubm-last-seen-version', '1.1.2');
     setIsFirstVisit(false);
     console.log('localStorage atualizado:', {
       visited: localStorage.getItem('ubm-system-visited'),
@@ -89,7 +89,7 @@ const Footer = () => {
             <p>&copy; 2025 Nova UBM - Todos os direitos reservados.</p>
             {isAuthenticated && (
               <p className="version-info" onClick={handleVersionClick}>
-                Sistema de Seminários UBM - Versão 1.1.1
+                Sistema de Seminários UBM - Versão 1.1.2
                 {isFirstVisit && <span className="new-badge">NOVO!</span>}
               </p>
             )}
@@ -117,38 +117,38 @@ const Footer = () => {
               
               <div className="version-section">
                 <h3>
-                  Versão 1.1.1 (Atual)
+                  Versão 1.1.2 (Atual)
                   {isFirstVisit && <span className="current-version-badge">ATUAL</span>}
                 </h3>
-                <p><strong>Data de lançamento:</strong> 29 de agosto de 2025</p>
+                <p><strong>Data de lançamento:</strong> 22 de setembro de 2025</p>
                 
                 <h4>🌟 Novos Recursos:</h4>
                 <ul>
-                  <li>Novo componente ErrorState para melhor feedback de erros</li>
-                  <li>Novo componente LoadingState para estados de carregamento</li>
-                  <li>Sistema de animações aprimorado para feedback visual</li>
+                  <li><strong>Eventos com múltiplos cursos:</strong> Agora é possível criar eventos que abrangem vários cursos simultaneamente</li>
+                  <li><strong>Eventos gerais:</strong> Suporte a eventos que não estão vinculados a cursos específicos</li>
+                  <li><strong>Cronograma com eventos concorrentes:</strong> Visualização aprimorada que exibe eventos simultâneos lado a lado</li>
                 </ul>
 
                 <h4>✨ Melhorias na Interface:</h4>
                 <ul>
-                  <li>Redesign do estado de erro com ícones e animações</li>
-                  <li>Estado de carregamento mais moderno e consistente</li>
-                  <li>Cores padronizadas seguindo a identidade visual UBM</li>
-                  <li>Melhor contraste e legibilidade</li>
+                  <li>Cards do cronograma agora exibem eventos simultâneos de forma mais organizada</li>
+                  <li>Melhor responsividade dos cards em diferentes tamanhos de tela</li>
+                  <li>Interface mais limpa com remoção da duração dos cards (mantida apenas nos detalhes)</li>
+                  <li>Organização aprimorada dos grupos de eventos por curso</li>
                 </ul>
 
                 <h4>🛠️ Correções:</h4>
                 <ul>
-                  <li>Ajuste nas cores do tema escuro para manter consistência</li>
-                  <li>Correção na exibição de mensagens de erro</li>
-                  <li>Padronização das animações de carregamento</li>
+                  <li>Corrigido problema com slots de 30 minutos sendo cortados no cronograma</li>
+                  <li>Ajustes na lógica de cálculo visual dos eventos simultâneos</li>
+                  <li>Melhorias na filtragem de eventos por múltiplos cursos</li>
                 </ul>
 
                 <h4>⚡ Otimizações:</h4>
                 <ul>
-                  <li>Melhor experiência de usuário durante carregamentos</li>
-                  <li>Feedback mais claro em casos de erro</li>
-                  <li>Transições mais suaves entre estados</li>
+                  <li>Algoritmo aprimorado para geração de horários de 30 em 30 minutos</li>
+                  <li>Melhor performance na renderização do cronograma com muitos eventos</li>
+                  <li>Cálculo mais preciso dos slots visuais para eventos sobrepostos</li>
                 </ul>
               </div>
               

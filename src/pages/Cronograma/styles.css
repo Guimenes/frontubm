@@ -601,8 +601,18 @@
   overflow: visible;
 }
 
-.evento-grade {
+.eventos-simultaneos {
   height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  position: relative;
+  overflow: visible;
+  align-items: stretch;
+}
+
+.evento-grade {
   border-radius: 12px;
   padding: 12px;
   border-left: 4px solid;
@@ -612,6 +622,13 @@
   cursor: pointer;
   position: relative;
   overflow: hidden;
+  flex: 1;
+  min-height: 0;
+}
+
+.evento-simultaneo {
+  flex: 1;
+  margin: 0 !important;
 }
 
 .evento-grade::before {
@@ -752,6 +769,8 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  min-width: 0;
+  flex: 1;
 }
 
 .evento-grade-local .material-icon,
@@ -857,6 +876,40 @@
 .evento-grade.card-longo .evento-grade-local,
 .evento-grade.card-longo .evento-grade-palestrante {
   font-size: 0.75rem;
+}
+
+/* Eventos simultâneos */
+.evento-simultaneo {
+  padding: 6px 8px;
+}
+
+.evento-simultaneo .evento-grade-tema {
+  font-size: 0.7rem;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  margin-bottom: 3px;
+}
+
+.evento-simultaneo .evento-grade-info {
+  margin-bottom: 3px;
+  gap: 2px;
+}
+
+.evento-simultaneo .evento-grade-local,
+.evento-simultaneo .evento-grade-palestrante {
+  font-size: 0.65rem;
+}
+
+.evento-simultaneo .evento-grade-duracao {
+  font-size: 0.6rem;
+  margin-bottom: 2px;
+}
+
+.evento-simultaneo .evento-grade-tipo {
+  font-size: 0.55rem;
+  padding: 1px 3px;
+  bottom: 4px;
+  right: 4px;
 }
 
 /* Melhorias visuais gerais */
@@ -1083,24 +1136,6 @@
   font-weight: 500;
 }
 
-.mobile-eventos-lista {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  animation: slideUp 0.4s ease-out;
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 .mobile-evento-card {
   background: white;
   border-radius: 12px;
@@ -1110,6 +1145,7 @@
   transition: all 0.3s ease;
   cursor: pointer;
   position: relative;
+  margin-bottom: 8px;
 }
 
 .mobile-evento-card:active {
@@ -1164,7 +1200,6 @@
   color: var(--text-dark);
   line-height: 1.3;
   margin-bottom: 8px;
-  /* Prioriza o título - máximo 3 linhas */
   display: -webkit-box;
   -webkit-line-clamp: 3;
   line-clamp: 3;
@@ -1349,6 +1384,50 @@
   .evento-grade-palestrante {
     font-size: 0.7rem;
   }
+
+  .eventos-simultaneos {
+    gap: 2px;
+    flex-wrap: wrap;
+  }
+
+  .evento-simultaneo {
+    padding: 4px 6px;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .evento-simultaneo .evento-grade-tema {
+    font-size: 0.65rem;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    margin-bottom: 2px;
+  }
+
+  .evento-simultaneo .evento-grade-info {
+    margin-bottom: 2px;
+    gap: 1px;
+  }
+
+  .evento-simultaneo .evento-grade-local,
+  .evento-simultaneo .evento-grade-palestrante {
+    font-size: 0.6rem;
+  }
+
+  .evento-simultaneo .evento-grade-duracao {
+    font-size: 0.55rem;
+    margin-bottom: 1px;
+  }
+
+  .evento-simultaneo .evento-grade-tipo {
+    font-size: 0.5rem;
+    padding: 1px 2px;
+    bottom: 3px;
+    right: 3px;
+  }
+
+  .evento-simultaneo .evento-grade-palestrante {
+    display: none; /* Esconde palestrante em cards simultâneos pequenos */
+  }
 }
 
 /* Tablets pequenos (481px - 768px) */
@@ -1502,7 +1581,7 @@
   }
   
   .grade-event-cell {
-    min-height: 100px;
+    min-height: 120px; /* Aumenta altura mínima para telas muito pequenas */
   }
   
   .evento-grade {
@@ -1516,6 +1595,66 @@
   .evento-grade-local,
   .evento-grade-palestrante {
     font-size: 0.7rem;
+  }
+
+  /* Para eventos simultâneos em telas pequenas */
+  .eventos-simultaneos {
+    flex-direction: column; /* Volta para coluna em telas muito pequenas */
+    gap: 1px;
+  }
+
+  .evento-simultaneo {
+    padding: 3px 4px;
+  }
+
+  .evento-simultaneo .evento-grade-tema {
+    font-size: 0.7rem;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+
+  .evento-simultaneo .evento-grade-local {
+    font-size: 0.65rem;
+  }
+  .mobile-evento-card {
+    margin-bottom: 12px;
+    padding: 14px;
+  }
+
+  .mobile-evento-titulo {
+    font-size: 0.9rem;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+
+  .mobile-evento-hora {
+    font-size: 1rem;
+  }
+
+  .mobile-evento-info {
+    gap: 2px;
+  }
+
+  .mobile-evento-local,
+  .mobile-evento-tipo {
+    font-size: 0.75rem;
+  }
+
+  .btn-nav-day {
+    width: 40px;
+    height: 40px;
+  }
+
+  .mobile-day-info h3 {
+    font-size: 1rem;
+  }
+
+  .mobile-day-counter {
+    font-size: 0.75rem;
+  }
+
+  .mobile-grupo-header h4 {
+    font-size: 1rem;
   }
 }
 

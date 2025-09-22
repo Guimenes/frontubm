@@ -25,7 +25,10 @@ export interface Evento {
   orientador?: string; // Para outros tipos de evento
   sala: string;
   tipoEvento: 'Palestra Principal' | 'Apresentação de Trabalhos' | 'Oficina' | 'Banner';
-  curso?: string | Curso; // ID do curso associado ou objeto curso populado (opcional - se não informado, evento é "geral")
+  // Novo: vários cursos por evento; se ausente/vazio, o evento é geral
+  cursos?: Array<string | Curso>;
+  // Legado: campo antigo de curso único (mantido para compatibilidade de leitura)
+  curso?: string | Curso;
   resumo?: string;
 }
 
