@@ -212,7 +212,7 @@ const FiltrosEvento: React.FC<FiltrosEventoProps> = ({ onFiltrar }) => {
                 <option value="">Todos os cursos</option>
                 {cursos.map(curso => (
                   <option key={curso._id} value={curso._id}>
-                    {curso.nome} ({curso.cod})
+                    {curso.nome}
                   </option>
                 ))}
               </select>

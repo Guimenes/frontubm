@@ -439,7 +439,7 @@ const Cronograma = () => {
                 <option value="GERAL">Eventos Gerais</option>
                 {cursos.map(curso => (
                   <option key={curso._id} value={curso._id}>
-                    {curso.cod} - {curso.nome}
+                    {curso.nome}
                   </option>
                 ))}
               </select>
