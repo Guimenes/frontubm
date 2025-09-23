@@ -656,16 +656,7 @@ const Cronograma = () => {
                                   {evento.tipoEvento}
                                 </div>
                               </div>
-
-                              <div className="mobile-evento-badge">
-                                {(() => {
-                                  const cursosEvento: any[] = Array.isArray((evento as any).cursos) ? (evento as any).cursos : (evento.curso ? [evento.curso] : []);
-                                  if (cursosEvento.length === 0) return 'GERAL';
-                                  const primeiro = cursosEvento[0];
-                                  const obj = typeof primeiro === 'object' ? (primeiro as any) : cursos.find(c => c._id === primeiro);
-                                  return obj ? obj.cod : 'CURSO';
-                                })()}
-                              </div>
+                              
                             </div>
                           ))}
                       </div>
