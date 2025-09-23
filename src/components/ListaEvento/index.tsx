@@ -80,12 +80,33 @@ const ListaEvento: React.FC<ListaEventoProps> = ({ onEditar, onAtualizar, atuali
       });
 
       if (response.success && response.data) {
-        setEventos(response.data);
-        if (response.pagination) {
+        // Filtro por curso no cliente (fallback caso o backend não aplique corretamente)
+        let lista = response.data as Evento[];
+        if (filtros?.curso) {
+          lista = lista.filter((ev: any) => {
+            const cursosEvento: any[] = Array.isArray(ev.cursos)
+              ? ev.cursos
+              : (ev.curso ? [ev.curso] : []);
+            // Caso no futuro exista filtro "GERAL" para eventos sem curso
+            if (filtros.curso === 'GERAL') return cursosEvento.length === 0;
+            return cursosEvento.some((c: any) => (typeof c === 'object' ? c._id : c) === filtros.curso);
+          });
+        }
+
+        setEventos(lista);
+        if (response.pagination && !filtros?.groupByCurso) {
+          // Quando não agrupado por curso, respeitar paginação do backend
           setPaginacao(prev => ({
             ...prev,
             totalPages: response.pagination!.totalPages,
             totalItems: response.pagination!.totalItems
+          }));
+        } else {
+          // Quando agrupado por curso (ou sem paginação do backend), ajustar contadores pela lista filtrada
+          setPaginacao(prev => ({
+            ...prev,
+            totalPages: 1,
+            totalItems: lista.length
           }));
         }
       }
@@ -324,10 +345,36 @@ const ListaEvento: React.FC<ListaEventoProps> = ({ onEditar, onAtualizar, atuali
     </div>
   );
 
+  // Peso heurístico para ordenar por "tamanho" do card (maiores primeiro)
+  const getCardWeight = (ev: Evento) => {
+    const resumoLen = ev.resumo ? ev.resumo.length : 0;
+    const autoresCount = Array.isArray(ev.autores) ? ev.autores.length : 0;
+    const temaLen = ev.tema ? ev.tema.length : 0;
+    const extras = (ev.palestrante ? 1 : 0) + (ev.orientador ? 1 : 0);
+    // Dar maior peso a autores e resumo, que expandem visivelmente o card
+    return autoresCount * 300 + resumoLen * 2 + temaLen + extras * 80;
+  };
+
   // Agrupamento por curso quando solicitado
   let eventosPorCurso: Record<string, Evento[]> | null = null;
   if (filtros?.groupByCurso && eventos.length > 0) {
-    eventosPorCurso = eventos.reduce((acc: Record<string, Evento[]>, ev) => {
+    // Se o filtro de curso estiver ativo, consolidar em um único grupo do curso selecionado
+    if (filtros?.curso) {
+      // Tentar descobrir o nome do curso selecionado a partir dos próprios eventos
+      let nomeCursoSelecionado: string = 'Curso';
+      for (const ev of eventos as any[]) {
+        const cursosDoEvento = Array.isArray(ev.cursos) ? ev.cursos : (ev.curso ? [ev.curso] : []);
+        const match = cursosDoEvento.find((c: any) => (typeof c === 'object' ? c._id : c) === filtros.curso);
+        if (match) {
+          nomeCursoSelecionado = typeof match === 'object' && match?.nome ? match.nome : nomeCursoSelecionado;
+          break;
+        }
+      }
+      // Ordenar dentro do grupo também
+      const ordenados = [...eventos].sort((a, b) => getCardWeight(b) - getCardWeight(a));
+      eventosPorCurso = { [nomeCursoSelecionado]: ordenados };
+    } else {
+      eventosPorCurso = eventos.reduce((acc: Record<string, Evento[]>, ev) => {
       // Verifica se o evento tem cursos[] ou curso legado
       const cursosDoEvento = Array.isArray((ev as any).cursos) && (ev as any).cursos.length > 0 
         ? (ev as any).cursos 
@@ -340,13 +387,18 @@ const ListaEvento: React.FC<ListaEventoProps> = ({ onEditar, onAtualizar, atuali
       } else {
         // Adiciona o evento em cada curso a que pertence
         cursosDoEvento.forEach((c: any) => {
-          const chave = typeof c === 'object' ? `${c.nome} (${c.cod})` : c ? String(c) : 'GERAIS';
+          const chave = typeof c === 'object' ? `${c.nome}` : c ? String(c) : 'GERAIS';
           if (!acc[chave]) acc[chave] = [];
           if (!acc[chave].includes(ev)) acc[chave].push(ev);
         });
       }
       return acc;
-    }, {});
+      }, {});
+      // Ordenar cada grupo por tamanho do card
+      Object.keys(eventosPorCurso).forEach(k => {
+        eventosPorCurso![k] = eventosPorCurso![k].slice().sort((a, b) => getCardWeight(b) - getCardWeight(a));
+      });
+    }
   }
 
   return (
@@ -377,7 +429,9 @@ const ListaEvento: React.FC<ListaEventoProps> = ({ onEditar, onAtualizar, atuali
         ))
       ) : (
         <div className="eventos-grid">
-          {eventos.map((evento) => renderEventoCard(evento))}
+          {[...eventos]
+            .sort((a, b) => getCardWeight(b) - getCardWeight(a))
+            .map((evento) => renderEventoCard(evento))}
         </div>
       )}
 
