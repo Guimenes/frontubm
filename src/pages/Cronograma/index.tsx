@@ -565,19 +565,6 @@ const Cronograma = () => {
                                             height: `${slotsVisuais * 120 + (slotsVisuais - 1) * 2}px`
                                           }}
                                         >
-                                          <div className="evento-grade-header">
-                                            <span className="evento-curso">
-                                              {(() => {
-                                                const cursosEvento: any[] = Array.isArray((evento as any).cursos) ? (evento as any).cursos : (evento.curso ? [evento.curso] : []);
-                                                if (cursosEvento.length === 0) return 'GERAL';
-                                                const primeiro = cursosEvento[0];
-                                                const obj = typeof primeiro === 'object' ? primeiro as any : cursos.find(c => c._id === primeiro);
-                                                return obj ? obj.cod : 'CURSO';
-                                              })()}
-                                            </span>
-                                            <span className="evento-codigo">#{evento.cod}</span>
-                                          </div>
-
                                           <div className="evento-grade-tema" title={evento.tema}>
                                             {evento.tema}
                                           </div>
