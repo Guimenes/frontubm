@@ -20,7 +20,7 @@ const Footer = () => {
     const timer = setTimeout(() => {
       // Verifica se é a primeira visita do usuário
       const hasVisited = localStorage.getItem('ubm-system-visited');
-      const currentVersion = '1.1.2';
+      const currentVersion = '1.1.3';
       const lastSeenVersion = localStorage.getItem('ubm-last-seen-version');
       
       // Mostra o modal se:
@@ -73,7 +73,7 @@ const Footer = () => {
     setShowReleaseNotes(false);
     // Marca que o usuário visitou e viu a versão atual
     localStorage.setItem('ubm-system-visited', 'true');
-    localStorage.setItem('ubm-last-seen-version', '1.1.2');
+    localStorage.setItem('ubm-last-seen-version', '1.1.3');
     setIsFirstVisit(false);
     console.log('localStorage atualizado:', {
       visited: localStorage.getItem('ubm-system-visited'),
@@ -89,7 +89,7 @@ const Footer = () => {
             <p>&copy; 2025 Nova UBM - Todos os direitos reservados.</p>
             {isAuthenticated && (
               <p className="version-info" onClick={handleVersionClick}>
-                Sistema de Seminários UBM - Versão 1.1.2
+                Sistema de Seminários UBM - Versão 1.1.3
                 {isFirstVisit && <span className="new-badge">NOVO!</span>}
               </p>
             )}
@@ -117,9 +117,38 @@ const Footer = () => {
               
               <div className="version-section">
                 <h3>
-                  Versão 1.1.2 (Atual)
+                  Versão 1.1.3 (Atual)
                   {isFirstVisit && <span className="current-version-badge">ATUAL</span>}
                 </h3>
+                <p><strong>Data de lançamento:</strong> 24 de setembro de 2025</p>
+                
+                <h4>🔒 Melhorias de Segurança:</h4>
+                <ul>
+                  <li><strong>Middleware de Autenticação:</strong> Implementação de autenticação obrigatória em todas as rotas POST, PUT e DELETE</li>
+                  <li><strong>Tratamento Seguro de Erros:</strong> Sistema de error handler centralizado para prevenir vazamento de informações sensíveis</li>
+                  <li><strong>Criptografia de Dados:</strong> Implementação de sistema de hash e criptografia para respostas de API GET</li>
+                  <li><strong>Proteção Admin:</strong> Rotas DELETE agora requerem token de administrador para operações críticas</li>
+                  <li><strong>CORS Cloudflare:</strong> Configuração específica de CORS para integração com Cloudflare Workers</li>
+                </ul>
+
+                <h4>🛡️ Hardening de Segurança:</h4>
+                <ul>
+                  <li>Remoção de todos os console.log que poderiam vazar informações sensíveis</li>
+                  <li>Headers de segurança aprimorados com Helmet.js configurado para produção</li>
+                  <li>Rate limiting implementado para proteção contra ataques de força bruta</li>
+                  <li>Validação rigorosa de origem de requisições</li>
+                </ul>
+
+                <h4>⚙️ Configurações de Produção:</h4>
+                <ul>
+                  <li>Chaves JWT e criptografia geradas com crypto.randomBytes para máxima segurança</li>
+                  <li>Configurações específicas para ambiente de produção</li>
+                  <li>Integração otimizada com Cloudflare Workers</li>
+                </ul>
+              </div>
+              
+              <div className="version-section">
+                <h3>Versão 1.1.2</h3>
                 <p><strong>Data de lançamento:</strong> 22 de setembro de 2025</p>
                 
                 <h4>🌟 Novos Recursos:</h4>
