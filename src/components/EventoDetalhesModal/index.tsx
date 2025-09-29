@@ -48,12 +48,16 @@ const ModalMarkup = ({
   };
 
   const obterNomeCurso = (cursoId: string) => {
-    const curso = cursos.find((c: Curso) => c._id === cursoId || c.cod === cursoId);
+    const curso = cursos.find(
+      (c: Curso) => c._id === cursoId || c.cod === cursoId
+    );
     return curso?.nome || cursoId;
   };
 
   const obterNomeLocal = (localId: string) => {
-    const local = locais.find((l: Local) => l._id === localId || l.cod === localId);
+    const local = locais.find(
+      (l: Local) => l._id === localId || l.cod === localId
+    );
     return local?.nome || localId;
   };
 
@@ -248,13 +252,15 @@ const ModalMarkup = ({
                     </span>
                     <div className="evento-cursos-tags">
                       {evento.cursos?.length ? (
-                        evento.cursos.map((curso: string | Curso, index: number) => (
-                          <span key={index} className="evento-curso-tag">
-                            {typeof curso === "string"
-                              ? obterNomeCurso(curso)
-                              : curso.nome}
-                          </span>
-                        ))
+                        evento.cursos.map(
+                          (curso: string | Curso, index: number) => (
+                            <span key={index} className="evento-curso-tag">
+                              {typeof curso === "string"
+                                ? obterNomeCurso(curso)
+                                : curso.nome}
+                            </span>
+                          )
+                        )
                       ) : evento.curso ? (
                         <span className="evento-curso-tag">
                           {typeof evento.curso === "string"
