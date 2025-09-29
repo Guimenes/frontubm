@@ -18,7 +18,8 @@
   border-radius: 12px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   width: 100%;
-  height: calc(100vh - 40px); /* Altura fixa baseada na viewport */
+  height: auto; /* Altura dinâmica */
+  max-height: calc(100vh - 40px); /* Limita a altura sem forçar ocupar toda a tela */
   animation: modalSlideIn 0.3s ease-out;
   display: flex;
   flex-direction: column;
@@ -38,7 +39,7 @@
 }
 
 .modal-large {
-  max-width: 1200px;
+  max-width: 800px; /* Reduzido para um modal grande mais compacto */
   max-height: calc(100vh - 40px);
 }
 
@@ -125,7 +126,8 @@
   }
   
   .modal-content {
-    height: calc(100vh - 20px);
+    height: auto;
+    max-height: calc(100vh - 20px);
     margin: 0;
   }
   
@@ -141,7 +143,8 @@
   .modal-medium,
   .modal-large {
     max-width: 100%;
-    height: calc(100vh - 20px);
+    height: auto;
+    max-height: calc(100vh - 20px);
   }
 }
 
@@ -151,7 +154,8 @@
   }
   
   .modal-content {
-    height: calc(100vh - 10px);
+    height: auto;
+    max-height: calc(100vh - 10px);
     border-radius: 8px;
   }
   
