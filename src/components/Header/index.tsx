@@ -62,12 +62,16 @@ const Header: React.FC = () => {
             </Link>
           </div>
 
-          {/* Título da página */}
-          {getPageTitle() && (
-            <div className="page-title">
-              <h1>{getPageTitle()}</h1>
-            </div>
-          )}
+          {/* Título principal do seminário */}
+          <div className="seminar-title">
+            <h1>
+              VIII Seminário de Pesquisa e Iniciação Científica e I Seminário de
+              Pós-graduação do UBM
+            </h1>
+            {getPageTitle() && (
+              <span className="page-subtitle">{getPageTitle()}</span>
+            )}
+          </div>
 
           {/* Menu Hamburger */}
           <button
