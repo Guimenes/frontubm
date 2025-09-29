@@ -1,15 +1,15 @@
 :root {
-  --primary-color: #8B1538;
-  --secondary-color: #A91E47;
-  --accent-color: #DC3545;
+  --primary-color: #8b1538;
+  --secondary-color: #a91e47;
+  --accent-color: #dc3545;
   --text-dark: #333333;
   --text-light: #666666;
-  --background-light: #FFFFFF;
-  --background-gray: #F8F9FA;
-  --border-color: #E0E0E0;
-  --success-color: #28A745;
-  --warning-color: #FFC107;
-  --info-color: #17A2B8;
+  --background-light: #ffffff;
+  --background-gray: #f8f9fa;
+  --border-color: #e0e0e0;
+  --success-color: #28a745;
+  --warning-color: #ffc107;
+  --info-color: #17a2b8;
 }
 
 * {
@@ -18,11 +18,24 @@
   box-sizing: border-box;
 }
 
-html, body {
+html {
   margin: 0;
   padding: 0;
   height: 100%;
-  overflow-x: hidden; /* Previne rolagem horizontal global */
+  overflow-x: hidden;
+  scroll-padding-top: 70px;
+  scroll-behavior: smooth;
+  position: relative;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow-x: hidden;
+  position: relative;
+  overflow-y: auto;
+  padding-top: 0;
 }
 
 /* Customização da scrollbar - Webkit (Chrome, Safari, Edge) */
@@ -36,14 +49,22 @@ html, body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  background: linear-gradient(
+    135deg,
+    var(--primary-color),
+    var(--secondary-color)
+  );
   border-radius: 6px;
   border: 2px solid #f8f9fa;
   transition: all 0.3s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+  background: linear-gradient(
+    135deg,
+    var(--secondary-color),
+    var(--primary-color)
+  );
   border: 1px solid #f8f9fa;
 }
 
@@ -58,7 +79,7 @@ html {
 }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   line-height: 1.6;
   color: var(--text-dark);
   background-color: var(--background-light);
@@ -71,7 +92,10 @@ body {
   display: flex;
   flex-direction: column;
   overflow-x: hidden; /* Previne rolagem horizontal */
+  position: relative;
 }
+
+/* O header sticky já ocupa espaço no fluxo; não é necessário padding-top aqui */
 
 main {
   margin: 0;
@@ -80,7 +104,12 @@ main {
 }
 
 main.with-header {
-  padding-top: 70px;
+  padding-top: 0;
+  min-height: calc(100vh - 70px);
+  box-sizing: border-box;
+  margin: 0;
+  position: relative;
+  top: 0;
 }
 
 a {
@@ -95,7 +124,9 @@ button {
   font-family: inherit;
 }
 
-input, textarea, select {
+input,
+textarea,
+select {
   font-family: inherit;
   font-size: inherit;
 }
@@ -118,13 +149,21 @@ input, textarea, select {
 }
 
 .scrollable-container::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, rgba(139, 21, 56, 0.6), rgba(169, 30, 71, 0.6));
+  background: linear-gradient(
+    135deg,
+    rgba(139, 21, 56, 0.6),
+    rgba(169, 30, 71, 0.6)
+  );
   border-radius: 4px;
   transition: all 0.3s ease;
 }
 
 .scrollable-container::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  background: linear-gradient(
+    135deg,
+    var(--primary-color),
+    var(--secondary-color)
+  );
 }
 
 /* Scrollbar para áreas de texto */
@@ -159,14 +198,22 @@ textarea::-webkit-scrollbar-thumb:hover {
 }
 
 .scroll-ubm::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  background: linear-gradient(
+    135deg,
+    var(--primary-color),
+    var(--secondary-color)
+  );
   border-radius: 5px;
   border: 1px solid rgba(255, 255, 255, 0.3);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .scroll-ubm::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+  background: linear-gradient(
+    135deg,
+    var(--secondary-color),
+    var(--primary-color)
+  );
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
@@ -179,8 +226,6 @@ textarea::-webkit-scrollbar-thumb:hover {
 * {
   scroll-behavior: smooth;
 }
-
-
 
 .btn {
   padding: 12px 24px;
@@ -262,8 +307,12 @@ textarea::-webkit-scrollbar-thumb:hover {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Responsive */
@@ -271,11 +320,11 @@ textarea::-webkit-scrollbar-thumb:hover {
   .container {
     padding: 0 16px;
   }
-  
+
   .btn {
     padding: 10px 20px;
   }
-  
+
   .card {
     padding: 16px;
   }

@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
-import MaterialIcon from '../MaterialIcon';
-import './styles.css';
+import React, { useState } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
+import MaterialIcon from "../MaterialIcon";
+import "./styles.css";
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -13,7 +13,7 @@ const Header: React.FC = () => {
   const handleLogout = () => {
     logout();
     setIsMenuOpen(false);
-    navigate('/login');
+    navigate("/login");
   };
 
   const toggleMenu = () => {
@@ -28,6 +28,25 @@ const Header: React.FC = () => {
     return location.pathname === path;
   };
 
+  const getPageTitle = () => {
+    switch (location.pathname) {
+      case "/cronograma":
+        return "Cronograma do Seminário";
+      case "/eventos":
+        return "Eventos";
+      case "/cursos":
+        return "Cursos";
+      case "/locais":
+        return "Locais";
+      case "/usuarios":
+        return "Usuários";
+      case "/permissoes":
+        return "Permissões";
+      default:
+        return null;
+    }
+  };
+
   return (
     <>
       <header className="header">
@@ -35,17 +54,24 @@ const Header: React.FC = () => {
           {/* Logo */}
           <div className="header-logo">
             <Link to="/cronograma" onClick={closeMenu}>
-              <img 
-                src="/images/logo.png" 
+              <img
+                src="/images/logo.png"
                 alt="Logo do Seminário UBM"
                 className="seminario-logo2"
               />
             </Link>
           </div>
 
+          {/* Título da página */}
+          {getPageTitle() && (
+            <div className="page-title">
+              <h1>{getPageTitle()}</h1>
+            </div>
+          )}
+
           {/* Menu Hamburger */}
-          <button 
-            className={`menu-toggle ${isMenuOpen ? 'active' : ''}`}
+          <button
+            className={`menu-toggle ${isMenuOpen ? "active" : ""}`}
             onClick={toggleMenu}
             aria-label="Menu"
           >
@@ -55,7 +81,7 @@ const Header: React.FC = () => {
       </header>
 
       {/* Menu Lateral */}
-      <nav className={`sidebar ${isMenuOpen ? 'open' : ''}`}>
+      <nav className={`sidebar ${isMenuOpen ? "open" : ""}`}>
         <div className="sidebar-content">
           {/* Saudação do usuário */}
           {isAuthenticated && user && (
@@ -69,9 +95,9 @@ const Header: React.FC = () => {
           <ul className="nav-menu">
             {/* Cronograma - sempre visível */}
             <li>
-              <Link 
-                to="/cronograma" 
-                className={isActiveRoute('/cronograma') ? 'active' : ''}
+              <Link
+                to="/cronograma"
+                className={isActiveRoute("/cronograma") ? "active" : ""}
                 onClick={closeMenu}
               >
                 <MaterialIcon name="schedule" />
@@ -83,12 +109,14 @@ const Header: React.FC = () => {
             {isAuthenticated && (
               <>
                 {/* Eventos */}
-                {(hasPermission('EVENTOS_LISTAR') || hasPermission('EVENTOS_CRIAR') || 
-                  hasPermission('EVENTOS_EDITAR') || hasPermission('EVENTOS_EXCLUIR')) && (
+                {(hasPermission("EVENTOS_LISTAR") ||
+                  hasPermission("EVENTOS_CRIAR") ||
+                  hasPermission("EVENTOS_EDITAR") ||
+                  hasPermission("EVENTOS_EXCLUIR")) && (
                   <li>
-                    <Link 
-                      to="/eventos" 
-                      className={isActiveRoute('/eventos') ? 'active' : ''}
+                    <Link
+                      to="/eventos"
+                      className={isActiveRoute("/eventos") ? "active" : ""}
                       onClick={closeMenu}
                     >
                       <MaterialIcon name="event" />
@@ -98,12 +126,14 @@ const Header: React.FC = () => {
                 )}
 
                 {/* Cursos */}
-                {(hasPermission('CURSOS_LISTAR') || hasPermission('CURSOS_CRIAR') || 
-                  hasPermission('CURSOS_EDITAR') || hasPermission('CURSOS_EXCLUIR')) && (
+                {(hasPermission("CURSOS_LISTAR") ||
+                  hasPermission("CURSOS_CRIAR") ||
+                  hasPermission("CURSOS_EDITAR") ||
+                  hasPermission("CURSOS_EXCLUIR")) && (
                   <li>
-                    <Link 
-                      to="/cursos" 
-                      className={isActiveRoute('/cursos') ? 'active' : ''}
+                    <Link
+                      to="/cursos"
+                      className={isActiveRoute("/cursos") ? "active" : ""}
                       onClick={closeMenu}
                     >
                       <MaterialIcon name="school" />
@@ -113,12 +143,14 @@ const Header: React.FC = () => {
                 )}
 
                 {/* Locais */}
-                {(hasPermission('LOCAIS_LISTAR') || hasPermission('LOCAIS_CRIAR') || 
-                  hasPermission('LOCAIS_EDITAR') || hasPermission('LOCAIS_EXCLUIR')) && (
+                {(hasPermission("LOCAIS_LISTAR") ||
+                  hasPermission("LOCAIS_CRIAR") ||
+                  hasPermission("LOCAIS_EDITAR") ||
+                  hasPermission("LOCAIS_EXCLUIR")) && (
                   <li>
-                    <Link 
-                      to="/locais" 
-                      className={isActiveRoute('/locais') ? 'active' : ''}
+                    <Link
+                      to="/locais"
+                      className={isActiveRoute("/locais") ? "active" : ""}
                       onClick={closeMenu}
                     >
                       <MaterialIcon name="place" />
@@ -128,12 +160,14 @@ const Header: React.FC = () => {
                 )}
 
                 {/* Usuários */}
-                {(hasPermission('USUARIOS_LISTAR') || hasPermission('USUARIOS_CRIAR') || 
-                  hasPermission('USUARIOS_EDITAR') || hasPermission('USUARIOS_EXCLUIR')) && (
+                {(hasPermission("USUARIOS_LISTAR") ||
+                  hasPermission("USUARIOS_CRIAR") ||
+                  hasPermission("USUARIOS_EDITAR") ||
+                  hasPermission("USUARIOS_EXCLUIR")) && (
                   <li>
-                    <Link 
-                      to="/usuarios" 
-                      className={isActiveRoute('/usuarios') ? 'active' : ''}
+                    <Link
+                      to="/usuarios"
+                      className={isActiveRoute("/usuarios") ? "active" : ""}
                       onClick={closeMenu}
                     >
                       <MaterialIcon name="people" />
@@ -143,11 +177,12 @@ const Header: React.FC = () => {
                 )}
 
                 {/* Permissões */}
-                {(hasPermission('PERMISSOES_LISTAR') || hasPermission('PERFIS_LISTAR')) && (
+                {(hasPermission("PERMISSOES_LISTAR") ||
+                  hasPermission("PERFIS_LISTAR")) && (
                   <li>
-                    <Link 
-                      to="/permissoes" 
-                      className={isActiveRoute('/permissoes') ? 'active' : ''}
+                    <Link
+                      to="/permissoes"
+                      className={isActiveRoute("/permissoes") ? "active" : ""}
                       onClick={closeMenu}
                     >
                       <MaterialIcon name="security" />
@@ -161,9 +196,9 @@ const Header: React.FC = () => {
             {/* Opções de autenticação */}
             {!isAuthenticated ? (
               <li className="auth-item">
-                <Link 
-                  to="/login" 
-                  className={isActiveRoute('/login') ? 'active' : ''}
+                <Link
+                  to="/login"
+                  className={isActiveRoute("/login") ? "active" : ""}
                   onClick={closeMenu}
                 >
                   <MaterialIcon name="login" />
@@ -172,10 +207,7 @@ const Header: React.FC = () => {
               </li>
             ) : (
               <li className="auth-item">
-                <button 
-                  onClick={handleLogout}
-                  className="logout-btn"
-                >
+                <button onClick={handleLogout} className="logout-btn">
                   <MaterialIcon name="logout" />
                   <span>Sair</span>
                 </button>
@@ -186,7 +218,9 @@ const Header: React.FC = () => {
       </nav>
 
       {/* Overlay para fechar o menu no mobile */}
-      {isMenuOpen && <div className="sidebar-overlay" onClick={closeMenu}></div>}
+      {isMenuOpen && (
+        <div className="sidebar-overlay" onClick={closeMenu}></div>
+      )}
     </>
   );
 };

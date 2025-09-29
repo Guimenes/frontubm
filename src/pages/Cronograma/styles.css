@@ -1,24 +1,19 @@
 .cronograma {
-  min-height: 100vh;
+  min-height: calc(100vh - 70px);
   background: var(--background-gray);
   padding: 20px 0;
 }
 
 .cronograma-header {
   text-align: center;
-  margin-bottom: 40px;
-}
-
-.cronograma-header h1 {
-  font-size: 2.5rem;
-  color: var(--primary-color);
-  margin-bottom: 12px;
-  font-weight: 700;
+  margin-bottom: 20px;
 }
 
 .cronograma-header p {
   font-size: 1.1rem;
   color: var(--text-light);
+  text-align: center;
+  margin: 0 auto;
 }
 
 /* Filtros */
@@ -93,7 +88,7 @@
 }
 
 .dia-tab.ativo::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -272,12 +267,6 @@
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.evento-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
 .evento-header {
@@ -472,21 +461,21 @@
     -webkit-line-clamp: 2;
     line-clamp: 2;
   }
-  
+
   .evento-grade-local,
   .evento-grade-palestrante {
     font-size: 0.65rem;
   }
-  
+
   .evento-curso {
     font-size: 0.6rem;
     padding: 2px 6px;
   }
-  
+
   .evento-codigo {
     font-size: 0.6rem;
   }
-  
+
   .evento-grade-duracao {
     font-size: 0.6rem;
   }
@@ -496,27 +485,27 @@
   .evento-grade {
     padding: 8px;
   }
-  
+
   .evento-grade-tema {
     font-size: 0.7rem;
     -webkit-line-clamp: 1;
     line-clamp: 1;
   }
-  
+
   .evento-grade-local,
   .evento-grade-palestrante {
     font-size: 0.6rem;
   }
-  
+
   .evento-grade-palestrante {
     display: none; /* Esconde palestrante em cards muito pequenos */
   }
-  
+
   .evento-curso {
     font-size: 0.55rem;
     padding: 1px 4px;
   }
-  
+
   .evento-codigo {
     font-size: 0.55rem;
   }
@@ -527,7 +516,7 @@
   .grade-container .evento-grade-tema {
     font-size: 0.75rem;
   }
-  
+
   .grade-container .evento-grade-local,
   .grade-container .evento-grade-palestrante {
     font-size: 0.65rem;
@@ -538,7 +527,7 @@
   .grade-container .evento-grade {
     padding: 8px;
   }
-  
+
   .grade-container .evento-grade-tema {
     font-size: 0.7rem;
     -webkit-line-clamp: 1;
@@ -567,58 +556,62 @@
   .grade-row {
     grid-template-columns: 90px repeat(auto-fit, minmax(200px, 1fr));
   }
-  
+
   .grade-container {
     min-width: 750px;
   }
 }
 
 .grade-cell {
-  padding: 12px;
-  border: 1px solid var(--border-color);
+  padding: 8px;
+  border: 1px solid #e0e0e0;
   background: white;
+  box-sizing: border-box;
 }
 
 .grade-header-cell {
-  background: var(--primary-color);
-  color: white;
+  background: #f5f5f5;
+  color: var(--text-dark);
   font-weight: 600;
   text-align: center;
-  font-size: 0.9rem;
-  text-transform: uppercase;
+  font-size: 0.85rem;
+  border-bottom: 2px solid var(--primary-color);
 }
 
 .grade-time-cell {
-  background: var(--background-gray);
-  font-size: 0.9rem;
+  background: #fafafa;
+  font-size: 0.85rem;
   text-align: center;
-  border-right: 2px solid var(--primary-color);
+  font-weight: 500;
+  color: var(--text-light);
+  border-right: 1px solid #d0d0d0;
 }
 
 .grade-event-cell {
-  min-height: 120px;
+  min-height: 60px;
   position: relative;
-  overflow: visible;
+  overflow: hidden;
+  padding: 2px;
 }
 
-.eventos-simultaneos {
+.eventos-simultaneos-container {
   height: 100%;
   width: 100%;
   display: flex;
   flex-direction: row;
-  gap: 4px;
+  gap: 2px;
   position: relative;
-  overflow: visible;
+  overflow: hidden;
   align-items: stretch;
+  box-sizing: border-box;
 }
 
 .evento-grade {
-  border-radius: 12px;
+  border-radius: 8px;
   padding: 12px;
   border-left: 4px solid;
   background: white;
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.12);
-  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   cursor: pointer;
   position: relative;
   overflow: hidden;
@@ -632,7 +625,7 @@
 }
 
 .evento-grade::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -640,11 +633,6 @@
   height: 3px;
   background: linear-gradient(90deg, transparent, currentColor, transparent);
   opacity: 0.1;
-}
-
-.evento-grade:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
 }
 
 .evento-grade.evento-expandido {
@@ -657,11 +645,6 @@
   background: transparent;
   border: none;
   /* Slot ocupado por evento de duração longa - fica vazio visualmente */
-}
-
-.evento-grade:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 
 .evento-grade.evento-expandido.palestra-principal {
@@ -878,38 +861,56 @@
   font-size: 0.75rem;
 }
 
-/* Eventos simultâneos */
+/* Eventos simultâneos - estilo Teams */
 .evento-simultaneo {
-  padding: 6px 8px;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  min-width: 0;
+  box-sizing: border-box;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .evento-simultaneo .evento-grade-tema {
-  font-size: 0.7rem;
-  -webkit-line-clamp: 1;
-  line-clamp: 1;
-  margin-bottom: 3px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  margin-bottom: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .evento-simultaneo .evento-grade-info {
-  margin-bottom: 3px;
+  margin-bottom: 4px;
   gap: 2px;
+  flex: 1;
 }
 
 .evento-simultaneo .evento-grade-local,
 .evento-simultaneo .evento-grade-palestrante {
-  font-size: 0.65rem;
+  font-size: 0.7rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .evento-simultaneo .evento-grade-duracao {
-  font-size: 0.6rem;
+  font-size: 0.65rem;
   margin-bottom: 2px;
 }
 
 .evento-simultaneo .evento-grade-tipo {
-  font-size: 0.55rem;
-  padding: 1px 3px;
-  bottom: 4px;
-  right: 4px;
+  font-size: 0.6rem;
+  padding: 2px 4px;
+  position: relative;
+  bottom: auto;
+  right: auto;
+  margin-top: auto;
+  align-self: flex-end;
 }
 
 /* Melhorias visuais gerais */
@@ -938,21 +939,6 @@
   font-weight: bold;
 }
 
-.evento-grade.card-compacto:hover::after,
-.evento-grade.card-curto:hover::after {
-  opacity: 1;
-  animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    opacity: 0.6;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
 /* Melhoria no posicionamento do tipo quando há indicador */
 .evento-grade.card-compacto .evento-grade-tipo,
 .evento-grade.card-curto .evento-grade-tipo {
@@ -960,32 +946,6 @@
   right: 4px;
   font-size: 0.55rem;
   padding: 1px 3px;
-}
-
-/* Loading state sutil */
-.evento-grade {
-  position: relative;
-  overflow: hidden;
-}
-
-.evento-grade::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.2),
-    transparent
-  );
-  transition: left 0.5s;
-}
-
-.evento-grade:hover::before {
-  left: 100%;
 }
 
 .evento-vazio {
@@ -1050,7 +1010,7 @@
 }
 
 .btn-nav-day::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -1061,17 +1021,6 @@
   transform: translate(-50%, -50%) scale(0);
   transition: transform 0.3s ease;
   z-index: -1;
-}
-
-.btn-nav-day:hover:not(:disabled)::before {
-  transform: translate(-50%, -50%) scale(1.2);
-  opacity: 0.3;
-}
-
-.btn-nav-day:hover:not(:disabled) {
-  background: #a8285a;
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(139, 21, 56, 0.3);
 }
 
 .btn-nav-day:disabled {
@@ -1142,14 +1091,9 @@
   padding: 16px;
   border-left: 4px solid;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
   cursor: pointer;
   position: relative;
   margin-bottom: 8px;
-}
-
-.mobile-evento-card:active {
-  transform: scale(0.98);
 }
 
 .mobile-evento-card.palestra-principal {
@@ -1298,20 +1242,20 @@
   .grade-container {
     min-width: 800px;
   }
-  
+
   .grade-header,
   .grade-row {
     grid-template-columns: 100px repeat(auto-fit, minmax(240px, 1fr));
   }
-  
+
   .grade-cell {
     padding: 10px;
   }
-  
+
   .evento-grade {
     padding: 10px;
   }
-  
+
   .evento-grade-tema {
     font-size: 0.85rem;
     -webkit-line-clamp: 2;
@@ -1324,13 +1268,13 @@
   .grade-scroll-hint {
     display: flex;
   }
-  
+
   .grade-cronograma {
     overflow-x: auto;
     padding: 20px;
     position: relative;
   }
-  
+
   /* Sombra gradiente para indicar scroll horizontal */
   .grade-cronograma::after {
     content: "";
@@ -1339,47 +1283,47 @@
     right: 0;
     bottom: 0;
     width: 20px;
-    background: linear-gradient(to left, rgba(255,255,255,0.8), transparent);
+    background: linear-gradient(to left, rgba(255, 255, 255, 0.8), transparent);
     pointer-events: none;
     z-index: 15;
   }
-  
+
   .grade-container {
     min-width: 750px;
   }
-  
+
   .grade-header,
   .grade-row {
     grid-template-columns: 90px repeat(3, 1fr);
   }
-  
+
   .grade-cell {
     padding: 8px;
   }
-  
+
   .grade-event-cell {
-    min-height: 110px;
+    min-height: 55px;
   }
-  
+
   .evento-grade {
     padding: 8px;
   }
-  
+
   .evento-grade-tema {
     font-size: 0.8rem;
     -webkit-line-clamp: 2;
     line-clamp: 2;
   }
-  
+
   .evento-curso {
     font-size: 0.65rem;
     padding: 1px 6px;
   }
-  
+
   .evento-codigo {
     font-size: 0.65rem;
   }
-  
+
   .evento-grade-local,
   .evento-grade-palestrante {
     font-size: 0.7rem;
@@ -1435,20 +1379,20 @@
   .mobile-evento-card {
     padding: 18px;
   }
-  
+
   .mobile-evento-titulo {
     font-size: 1rem;
   }
-  
+
   .mobile-evento-hora {
     font-size: 1.2rem;
   }
-  
+
   .btn-nav-day {
     width: 48px;
     height: 48px;
   }
-  
+
   .mobile-day-info h3 {
     font-size: 1.2rem;
   }
@@ -1460,32 +1404,28 @@
   .desktop-view {
     display: none;
   }
-  
+
   .mobile-view {
     display: block;
   }
-  
+
   .mobile-day-navigation {
     display: block;
   }
-  
+
   .grade-scroll-hint {
     display: none; /* Não precisa da dica de scroll no mobile */
   }
-  
+
   .cronograma {
     padding: 20px 0;
   }
-  
-  .cronograma-header h1 {
-    font-size: 2rem;
-  }
-  
+
   .filtros-section,
   .dias-seminario {
     padding: 20px;
   }
-  
+
   .filtros-grid {
     grid-template-columns: 1fr;
   }
@@ -1513,13 +1453,13 @@
   .tipos-resumo {
     justify-content: center;
   }
-  
+
   .visualizacao-controls {
     flex-direction: column;
     align-items: stretch;
     gap: 12px;
   }
-  
+
   .view-buttons,
   .view-options {
     justify-content: center;
@@ -1528,32 +1468,32 @@
   .resultados-count {
     text-align: center;
   }
-  
+
   .evento-card {
     padding: 20px;
   }
-  
+
   .evento-header {
     flex-direction: column;
     gap: 8px;
     align-items: flex-start;
   }
-  
+
   .evento-details {
     grid-template-columns: 1fr;
   }
-  
+
   .evento-actions {
     justify-content: center;
   }
-  
+
   /* Grade responsiva */
   .grade-cronograma {
     padding: 16px;
     overflow-x: auto;
     position: relative;
   }
-  
+
   /* Sombra gradiente para indicar scroll horizontal em smartphones */
   .grade-cronograma::after {
     content: "";
@@ -1562,36 +1502,36 @@
     right: 0;
     bottom: 0;
     width: 15px;
-    background: linear-gradient(to left, rgba(255,255,255,0.9), transparent);
+    background: linear-gradient(to left, rgba(255, 255, 255, 0.9), transparent);
     pointer-events: none;
     z-index: 15;
   }
-  
+
   .grade-container {
     min-width: 600px;
   }
-  
+
   .grade-header,
   .grade-row {
     grid-template-columns: 70px repeat(3, 1fr);
   }
-  
+
   .grade-cell {
     padding: 8px;
   }
-  
+
   .grade-event-cell {
-    min-height: 120px; /* Aumenta altura mínima para telas muito pequenas */
+    min-height: 60px; /* Altura para slots de 15 minutos */
   }
-  
+
   .evento-grade {
     padding: 8px;
   }
-  
+
   .evento-grade-tema {
     font-size: 0.8rem;
   }
-  
+
   .evento-grade-local,
   .evento-grade-palestrante {
     font-size: 0.7rem;
@@ -1678,78 +1618,78 @@
   .tipos-resumo {
     justify-content: center;
   }
-  
+
   .evento-tema {
     font-size: 1.1rem;
   }
-  
+
   .evento-actions {
     flex-direction: column;
   }
-  
+
   /* Ajustes para mobile cards em telas muito pequenas */
   .mobile-evento-card {
     padding: 14px;
     margin-bottom: 8px;
   }
-  
+
   .mobile-evento-titulo {
     font-size: 0.9rem;
     -webkit-line-clamp: 2; /* Reduz para 2 linhas em telas muito pequenas */
     line-clamp: 2;
   }
-  
+
   .mobile-evento-hora {
     font-size: 1rem;
   }
-  
+
   .mobile-evento-info {
     gap: 2px;
   }
-  
+
   .mobile-evento-local,
   .mobile-evento-tipo {
     font-size: 0.75rem;
   }
-  
+
   .btn-nav-day {
     width: 40px;
     height: 40px;
   }
-  
+
   .mobile-day-info h3 {
     font-size: 1rem;
   }
-  
+
   .mobile-day-counter {
     font-size: 0.75rem;
   }
-  
+
   .mobile-grupo-header h4 {
     font-size: 1rem;
   }
-  
+
   /* Grade desktop (caso seja forçada a aparecer) */
   .grade-container {
     min-width: 500px;
   }
-  
+
   .grade-header,
   .grade-row {
     grid-template-columns: 70px repeat(auto-fit, minmax(200px, 1fr));
   }
-  
+
   .evento-grade-tema {
     font-size: 0.75rem;
     -webkit-line-clamp: 3;
     line-clamp: 3;
   }
-  
+
   .evento-curso {
     font-size: 0.6rem;
     padding: 1px 6px;
   }
-  
+
   .evento-codigo {
     font-size: 0.6rem;
   }
@@ -1777,7 +1717,12 @@
 }
 
 .evento-hero-background {
-  background: linear-gradient(135deg, var(--primary-color) 0%, #a8285a 50%, #8b1538 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primary-color) 0%,
+    #a8285a 50%,
+    #8b1538 100%
+  );
   position: relative;
   padding: 24px;
   color: white;
@@ -1878,7 +1823,7 @@
 
 .decoracao-lines::before,
 .decoracao-lines::after {
-  content: '';
+  content: "";
   position: absolute;
   background: white;
   border-radius: 2px;
@@ -1901,7 +1846,8 @@
 }
 
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0px) rotate(0deg);
   }
   50% {
@@ -1959,7 +1905,7 @@
 }
 
 .info-card::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -1968,16 +1914,6 @@
   background: linear-gradient(90deg, var(--primary-color), #a8285a);
   transform: scaleX(0);
   transition: transform 0.3s ease;
-}
-
-.info-card:hover::before {
-  transform: scaleX(1);
-}
-
-.info-card:hover {
-  border-color: var(--primary-color);
-  box-shadow: 0 6px 20px rgba(139, 21, 56, 0.15);
-  transform: translateY(-2px);
 }
 
 .info-card.destaque {
@@ -2105,7 +2041,7 @@
 }
 
 .participante-destaque::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -2304,51 +2240,51 @@
   .evento-hero-background {
     padding: 20px;
   }
-  
+
   .evento-titulo-hero {
     font-size: 1.3rem;
   }
-  
+
   .evento-content-area {
     padding: 16px 20px 0;
   }
-  
+
   .evento-info-cards {
     grid-template-columns: 1fr;
     gap: 12px;
     margin-bottom: 20px;
   }
-  
+
   .info-card {
     padding: 16px;
     flex-direction: column;
     text-align: center;
     gap: 10px;
   }
-  
+
   .evento-secao {
     margin-bottom: 24px;
   }
-  
+
   .participante-destaque {
     padding: 16px;
     flex-direction: column;
     text-align: center;
     gap: 12px;
   }
-  
+
   .autores-lista {
     grid-template-columns: 1fr;
   }
-  
+
   .resumo-container {
     padding: 16px;
   }
-  
+
   .evento-footer {
     padding: 12px 20px;
   }
-  
+
   .footer-info {
     flex-direction: column;
     gap: 3px;
@@ -2361,29 +2297,107 @@
     flex-direction: column;
     align-items: flex-start;
   }
-  
+
   .evento-titulo-hero {
     font-size: 1.1rem;
   }
-  
+
   .evento-content-area {
     padding: 12px 16px 0;
   }
-  
+
   .info-card-icon {
     padding: 8px;
   }
-  
+
   .participante-avatar {
     padding: 10px;
   }
-  
+
   .resumo-texto p {
     text-indent: 0;
     text-align: left;
   }
-  
+
   .evento-footer {
     padding: 10px 16px;
   }
+}
+
+/* Novo CSS para grade com CSS Grid */
+.grade-main {
+  position: relative;
+}
+
+.evento-grade-grid {
+  border-radius: 12px;
+  padding: 12px;
+  border-left: 4px solid;
+  background: white;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.12);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.evento-grade-grid::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, currentColor, transparent);
+  opacity: 0.1;
+}
+
+.evento-grade-grid.evento-expandido {
+  border: 2px solid;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.evento-grade-grid.evento-expandido.palestra-principal {
+  border-color: var(--primary-color);
+  border-left-color: var(--primary-color);
+  background: linear-gradient(135deg, #fff 0%, rgba(139, 21, 56, 0.05) 100%);
+}
+
+.evento-grade-grid.evento-expandido.apresentação-de-trabalhos {
+  border-color: var(--info-color);
+  border-left-color: var(--info-color);
+  background: linear-gradient(135deg, #fff 0%, rgba(23, 162, 184, 0.05) 100%);
+}
+
+.evento-grade-grid.evento-expandido.oficina {
+  border-color: var(--success-color);
+  border-left-color: var(--success-color);
+  background: linear-gradient(135deg, #fff 0%, rgba(40, 167, 69, 0.05) 100%);
+}
+
+.evento-grade-grid.evento-expandido.banner {
+  border-color: #9c27b0;
+  border-left-color: #9c27b0;
+  background: linear-gradient(135deg, #fff 0%, rgba(156, 39, 176, 0.05) 100%);
+}
+
+.evento-grade-grid.palestra-principal {
+  border-left-color: var(--primary-color);
+  background: linear-gradient(135deg, #fff 0%, rgba(139, 21, 56, 0.05) 100%);
+}
+
+.evento-grade-grid.apresentação-de-trabalhos {
+  border-left-color: var(--info-color);
+  background: linear-gradient(135deg, #fff 0%, rgba(23, 162, 184, 0.05) 100%);
+}
+
+.evento-grade-grid.oficina {
+  border-left-color: var(--success-color);
+  background: linear-gradient(135deg, #fff 0%, rgba(40, 167, 69, 0.05) 100%);
+}
+
+.evento-grade-grid.banner {
+  border-left-color: #9c27b0;
+  background: linear-gradient(135deg, #fff 0%, rgba(156, 39, 176, 0.05) 100%);
 }
