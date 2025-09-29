@@ -1,7 +1,13 @@
 .cronograma {
   min-height: calc(100vh - 70px);
-  background: var(--background-gray);
+  background: linear-gradient(
+      rgba(248, 250, 252, 0.85),
+      rgba(248, 250, 252, 0.85)
+    ),
+    url("/images/fundo.png") center center/cover no-repeat;
+  background-attachment: fixed;
   padding: 20px 0;
+  position: relative;
 }
 
 .cronograma-header {
@@ -1419,6 +1425,7 @@
 
   .cronograma {
     padding: 20px 0;
+    background-attachment: scroll; /* Melhor performance em mobile */
   }
 
   .filtros-section,

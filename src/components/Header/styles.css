@@ -4,11 +4,15 @@
   top: 0;
   left: 0;
   right: 0;
-  background: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 32px rgba(139, 21, 56, 0.08),
+    0 1px 0px rgba(255, 255, 255, 0.5), inset 0 1px 0px rgba(255, 255, 255, 0.8);
   z-index: 9999;
   height: 70px;
-  border-bottom: 3px solid #a91e47;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-bottom: 1px solid rgba(139, 21, 56, 0.1);
 }
 
 .header-container {
@@ -20,6 +24,8 @@
   width: 100%;
   max-width: none;
   margin: 0;
+  position: relative;
+  backdrop-filter: blur(10px);
 }
 
 /* Logo */
@@ -254,6 +260,12 @@
 
 /* Responsividade */
 @media (max-width: 768px) {
+  .header {
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    background: rgba(255, 255, 255, 0.9);
+  }
+
   .header-container {
     padding: 0 15px;
   }
@@ -287,6 +299,12 @@
 }
 
 @media (max-width: 480px) {
+  .header {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.92);
+  }
+
   .header-container {
     padding: 0 10px;
   }
