@@ -565,7 +565,8 @@ const Cronograma = () => {
                   <div className="mobile-day-info">
                     <h3>{formatarDiaCompleto(diaAtualMobile)}</h3>
                     <span className="mobile-day-counter">
-                      {obterDiasUnicos().indexOf(diaAtualMobile) + 1} de {obterDiasUnicos().length}
+                      {obterDiasUnicos().indexOf(diaAtualMobile) + 1} de{" "}
+                      {obterDiasUnicos().length}
                     </span>
                   </div>
                   <button
@@ -600,10 +601,22 @@ const Cronograma = () => {
                     </div>
 
                     <div className="grade-container">
-                      <div className="grade-header" style={{display:'grid',gridTemplateColumns:`120px repeat(${diasUnicos.length}, minmax(280px, 1fr))`,gap:'2px'}}>
-                        <div className="grade-cell grade-header-cell">Horário</div>
+                      <div
+                        className="grade-header"
+                        style={{
+                          display: "grid",
+                          gridTemplateColumns: `120px repeat(${diasUnicos.length}, minmax(280px, 1fr))`,
+                          gap: "2px",
+                        }}
+                      >
+                        <div className="grade-cell grade-header-cell">
+                          Horário
+                        </div>
                         {diasUnicos.map((dia) => (
-                          <div key={`${grupo.chave}-${dia}`} className="grade-cell grade-header-cell">
+                          <div
+                            key={`${grupo.chave}-${dia}`}
+                            className="grade-cell grade-header-cell"
+                          >
                             {formatarDataCurta(new Date(dia))}
                           </div>
                         ))}
