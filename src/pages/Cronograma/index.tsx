@@ -460,6 +460,8 @@ const Cronograma = () => {
     );
   }
 
+  const diasUnicos = obterDiasUnicos();
+
   return (
     <div className="cronograma">
       <div className="container">
@@ -563,8 +565,7 @@ const Cronograma = () => {
                   <div className="mobile-day-info">
                     <h3>{formatarDiaCompleto(diaAtualMobile)}</h3>
                     <span className="mobile-day-counter">
-                      {obterDiasUnicos().indexOf(diaAtualMobile) + 1} de{" "}
-                      {obterDiasUnicos().length}
+                      {obterDiasUnicos().indexOf(diaAtualMobile) + 1} de {obterDiasUnicos().length}
                     </span>
                   </div>
                   <button
@@ -599,15 +600,10 @@ const Cronograma = () => {
                     </div>
 
                     <div className="grade-container">
-                      <div className="grade-header">
-                        <div className="grade-cell grade-header-cell">
-                          Horário
-                        </div>
-                        {obterDiasUnicos().map((dia) => (
-                          <div
-                            key={`${grupo.chave}-${dia}`}
-                            className="grade-cell grade-header-cell"
-                          >
+                      <div className="grade-header" style={{display:'grid',gridTemplateColumns:`120px repeat(${diasUnicos.length}, minmax(280px, 1fr))`,gap:'2px'}}>
+                        <div className="grade-cell grade-header-cell">Horário</div>
+                        {diasUnicos.map((dia) => (
+                          <div key={`${grupo.chave}-${dia}`} className="grade-cell grade-header-cell">
                             {formatarDataCurta(new Date(dia))}
                           </div>
                         ))}
@@ -644,7 +640,7 @@ const Cronograma = () => {
                         )}
 
                         {/* Células vazias dos dias */}
-                        {obterDiasUnicos().map((dia, colIndex) =>
+                        {diasUnicos.map((dia, colIndex) =>
                           obterHorariosUnicos(grupo.eventos).map(
                             (horario, rowIndex) => {
                               const eventosNaCelula = obterEventosPorDiaHorario(
@@ -653,7 +649,6 @@ const Cronograma = () => {
                                 grupo.eventos
                               );
                               const temEvento = eventosNaCelula.length > 0;
-
                               return (
                                 <div
                                   key={`empty-${dia}-${horario}`}
