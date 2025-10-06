@@ -8,6 +8,14 @@
   background-attachment: fixed;
   padding: 20px 0;
   position: relative;
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+}
+
+.cronograma .container {
+  max-width: none;
+  width: 100%;
+  padding: 0 20px;
 }
 
 .cronograma-header {
@@ -390,6 +398,8 @@
   padding: 24px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   overflow-x: auto;
+  margin: 0 -20px; /* Expande além do padding do container */
+  border-radius: 0; /* Remove bordas arredondadas nas laterais */
   /* Melhor scroll em tablets */
   scrollbar-width: thin;
   scrollbar-color: var(--primary-color) var(--background-gray);
@@ -455,7 +465,8 @@
 .grade-container {
   display: flex;
   flex-direction: column;
-  min-width: 900px;
+  min-width: 100%;
+  width: 100%;
   overflow-x: auto;
   container-type: inline-size; /* Container queries support */
 }
@@ -557,6 +568,13 @@
   }
 }
 
+@media (min-width: 1400px) {
+  .grade-header,
+  .grade-row {
+    grid-template-columns: 120px repeat(auto-fit, minmax(300px, 1fr));
+  }
+}
+
 @media (max-width: 1200px) {
   .grade-header,
   .grade-row {
@@ -564,7 +582,7 @@
   }
 
   .grade-container {
-    min-width: 750px;
+    min-width: 100%;
   }
 }
 
@@ -1246,7 +1264,7 @@
 /* Tablets grandes (1024px - 1366px) */
 @media (max-width: 1366px) and (min-width: 1025px) {
   .grade-container {
-    min-width: 800px;
+    min-width: 100%;
   }
 
   .grade-header,
@@ -1295,7 +1313,7 @@
   }
 
   .grade-container {
-    min-width: 750px;
+    min-width: 100%;
   }
 
   .grade-header,
@@ -1515,7 +1533,7 @@
   }
 
   .grade-container {
-    min-width: 600px;
+    min-width: 100%;
   }
 
   .grade-header,
@@ -1678,7 +1696,7 @@
 
   /* Grade desktop (caso seja forçada a aparecer) */
   .grade-container {
-    min-width: 500px;
+    min-width: 100%;
   }
 
   .grade-header,
