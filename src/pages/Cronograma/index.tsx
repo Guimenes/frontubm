@@ -176,8 +176,11 @@ const Cronograma = () => {
     const horariosSet = new Set<string>();
 
     eventosParaHorarios.forEach((evento) => {
-      const inicioMinutos =
-        evento.hora.getHours() * 60 + evento.hora.getMinutes();
+      // Obter horas e minutos diretamente do objeto Date para evitar problemas de fuso
+      const eventoHora = evento.hora.getHours();
+      const eventoMinuto = evento.hora.getMinutes();
+      const inicioMinutos = eventoHora * 60 + eventoMinuto;
+
       const duracaoEvento = evento.duracao || 60;
       const fimMinutos = inicioMinutos + duracaoEvento;
 
@@ -222,8 +225,10 @@ const Cronograma = () => {
       const slotMinutosDoDia = slotHora * 60 + slotMinuto;
 
       // Converte horário do evento para minutos desde o início do dia
-      const eventoMinutosDoDia =
-        evento.hora.getHours() * 60 + evento.hora.getMinutes();
+      // Pegamos as horas e minutos diretamente do Date para evitar problemas de fuso
+      const eventoHora = evento.hora.getHours();
+      const eventoMinuto = evento.hora.getMinutes();
+      const eventoMinutosDoDia = eventoHora * 60 + eventoMinuto;
 
       // Calcula o fim do evento em minutos
       const duracaoEvento = evento.duracao || 60;
@@ -662,6 +667,29 @@ const Cronograma = () => {
                                 grupo.eventos
                               );
                               const temEvento = eventosNaCelula.length > 0;
+
+                              // Log para todos os eventos na grade para verificar seu posicionamento
+                              if (eventosNaCelula.length > 0) {
+                                eventosNaCelula.forEach((e) => {
+                                  if (
+                                    e.tema.includes("Relato de experiência") ||
+                                    e.tema.includes("estágio")
+                                  ) {
+                                    console.log(
+                                      `[DEBUG] Evento "${e.tema}" encontrado em ${horario}:`,
+                                      {
+                                        horarioSlot: horario,
+                                        horarioEvento: `${e.hora.getHours()}:${e.hora
+                                          .getMinutes()
+                                          .toString()
+                                          .padStart(2, "0")}`,
+                                        duracao: e.duracao || 60,
+                                        id: e._id,
+                                      }
+                                    );
+                                  }
+                                });
+                              }
                               return (
                                 <div
                                   key={`empty-${dia}-${horario}`}
@@ -706,9 +734,11 @@ const Cronograma = () => {
                               if (eventosProcessados.has(evento._id)) return;
 
                               // Calcular início e fim deste evento
+                              // Obter horas e minutos diretamente para evitar problemas de fuso
+                              const eventoHora = evento.hora.getHours();
+                              const eventoMinuto = evento.hora.getMinutes();
                               const inicioEvento =
-                                evento.hora.getHours() * 60 +
-                                evento.hora.getMinutes();
+                                eventoHora * 60 + eventoMinuto;
                               const fimEvento =
                                 inicioEvento + (evento.duracao || 60);
 
@@ -722,9 +752,12 @@ const Cronograma = () => {
                                 )
                                   return;
 
-                                const inicioOutro =
-                                  outroEvento.hora.getHours() * 60 +
+                                // Obter horas e minutos diretamente para evitar problemas de fuso
+                                const outroHora = outroEvento.hora.getHours();
+                                const outroMinuto =
                                   outroEvento.hora.getMinutes();
+                                const inicioOutro =
+                                  outroHora * 60 + outroMinuto;
                                 const fimOutro =
                                   inicioOutro + (outroEvento.duracao || 60);
 
@@ -755,8 +788,10 @@ const Cronograma = () => {
 
                               // Usar o evento com menor horário de início como chave
                               const eventoBase = eventosSimultaneosGrupo[0];
-                              const horarioBase = `${eventoBase.hora.getHours()}:${eventoBase.hora
-                                .getMinutes()
+                              // Obter horas e minutos diretamente
+                              const horaBase = eventoBase.hora.getHours();
+                              const minutoBase = eventoBase.hora.getMinutes();
+                              const horarioBase = `${horaBase}:${minutoBase
                                 .toString()
                                 .padStart(2, "0")}`;
                               const key = `${dia}-${horarioBase}`;
