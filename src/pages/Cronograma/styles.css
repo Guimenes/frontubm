@@ -666,11 +666,12 @@
   width: 100%;
   display: flex;
   flex-direction: row;
-  gap: 2px;
+  gap: 3px; /* Aumentar gap para melhor separação */
   position: relative;
-  overflow: visible; /* Mudança para permitir que cards pequenos sejam visíveis */
-  align-items: stretch;
+  overflow: visible;
+  align-items: flex-start; /* Alinhar ao topo para evitar sobreposições */
   box-sizing: border-box;
+  padding: 2px; /* Padding para criar espaço interno */
 }
 
 .evento-grade {
@@ -696,14 +697,55 @@
 /* Eventos mais curtos ficam por cima */
 .evento-simultaneo.card-curto {
   z-index: 4;
+  flex-shrink: 0; /* Não encolhe */
 }
 
 .evento-simultaneo.card-compacto {
   z-index: 3;
+  flex-shrink: 0; /* Não encolhe */
 }
 
 .evento-simultaneo.card-longo {
   z-index: 1;
+  flex-shrink: 1; /* Pode encolher se necessário */
+}
+
+/* Força distribuição equitativa quando há múltiplos eventos */
+.eventos-simultaneos-container:has(.evento-simultaneo:nth-child(2))
+  .evento-simultaneo {
+  flex: 1 1 auto;
+  min-width: calc(50% - 3px);
+}
+
+.eventos-simultaneos-container:has(.evento-simultaneo:nth-child(3))
+  .evento-simultaneo {
+  flex: 1 1 auto;
+  min-width: calc(33.33% - 3px);
+}
+
+.eventos-simultaneos-container:has(.evento-simultaneo:nth-child(4))
+  .evento-simultaneo {
+  flex: 1 1 auto;
+  min-width: calc(25% - 3px);
+}
+
+/* Fallback para navegadores sem suporte a :has() */
+.eventos-simultaneos-container.eventos-2 .evento-simultaneo {
+  flex: 1 1 auto;
+  min-width: calc(50% - 3px);
+  max-width: calc(50% - 3px);
+}
+
+.eventos-simultaneos-container.eventos-3 .evento-simultaneo {
+  flex: 1 1 auto;
+  min-width: calc(33.33% - 3px);
+  max-width: calc(33.33% - 3px);
+}
+
+.eventos-simultaneos-container.eventos-4 .evento-simultaneo {
+  flex: 1 1 auto;
+  min-width: calc(25% - 3px);
+  max-width: calc(25% - 3px);
 }
 
 .evento-grade::before {
@@ -947,17 +989,19 @@
 .evento-simultaneo {
   padding: 8px;
   border-radius: 6px;
-  border: 1px solid rgba(0, 0, 0, 0.15);
+  border: 2px solid rgba(0, 0, 0, 0.15);
   min-width: 0;
+  max-width: calc(100% - 4px); /* Garante que não ultrapasse o container */
   box-sizing: border-box;
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start; /* Alinhar ao topo */
   position: relative;
-  overflow: visible; /* Permite que o conteúdo seja visível */
+  overflow: visible;
   background: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
+  margin: 0 !important; /* Remove margens que possam causar sobreposição */
 }
 
 /* Garantir que eventos menores sejam sempre visíveis */

@@ -715,113 +715,124 @@ const Cronograma = () => {
                         {/* Eventos posicionados no grid */}
                         {(() => {
                           const eventosRenderizados = new Set();
-                          const eventosSimultaneos = new Map();
+                          const eventosSimultaneos: Map<
+                            string,
+                            {
+                              dia: string;
+                              horario: string;
+                              eventos: Evento[];
+                              colIndex: number;
+                            }
+                          > = new Map();
 
-                          // Detectar eventos simultâneos (que se sobrepõem no tempo)
+                          // Nova lógica robusta para detectar eventos simultâneos
                           const eventosDoGrupo = grupo.eventos;
 
-                          // Para cada dia e coluna
+                          // Para cada dia, criar uma estrutura de dados para detectar sobreposições
                           obterDiasUnicos().forEach((dia, colIndex) => {
-                            // Pegar todos os eventos do dia
-                            const eventosDoDia = eventosDoGrupo.filter(
-                              (evento) => evento.data.toDateString() === dia
-                            );
+                            // Pegar todos os eventos do dia e ordená-los por horário
+                            const eventosDoDia = eventosDoGrupo
+                              .filter(
+                                (evento) => evento.data.toDateString() === dia
+                              )
+                              .sort(
+                                (a, b) => a.hora.getTime() - b.hora.getTime()
+                              );
 
-                            // Detectar sobreposições por algoritmo de overlapping intervals
-                            const eventosProcessados = new Set();
-
-                            eventosDoDia.forEach((evento) => {
-                              if (eventosProcessados.has(evento._id)) return;
-
-                              // Calcular início e fim deste evento
-                              // Obter horas e minutos diretamente para evitar problemas de fuso
+                            // Criar intervalos de tempo para cada evento
+                            const intervalos = eventosDoDia.map((evento) => {
                               const eventoHora = evento.hora.getHours();
                               const eventoMinuto = evento.hora.getMinutes();
-                              const inicioEvento =
-                                eventoHora * 60 + eventoMinuto;
-                              const fimEvento =
-                                inicioEvento + (evento.duracao || 60);
+                              const inicio = eventoHora * 60 + eventoMinuto;
+                              const fim = inicio + (evento.duracao || 60);
 
-                              // Encontrar todos os eventos que se sobrepõem com este
-                              const eventosSimultaneosGrupo = [evento];
+                              return {
+                                evento,
+                                inicio,
+                                fim,
+                                processado: false,
+                              };
+                            });
 
-                              eventosDoDia.forEach((outroEvento) => {
-                                if (
-                                  outroEvento._id === evento._id ||
-                                  eventosProcessados.has(outroEvento._id)
-                                )
-                                  return;
+                            // Algoritmo de interval scheduling para detectar sobreposições
+                            for (let i = 0; i < intervalos.length; i++) {
+                              if (intervalos[i].processado) continue;
 
-                                // Obter horas e minutos diretamente para evitar problemas de fuso
-                                const outroHora = outroEvento.hora.getHours();
-                                const outroMinuto =
-                                  outroEvento.hora.getMinutes();
-                                const inicioOutro =
-                                  outroHora * 60 + outroMinuto;
-                                const fimOutro =
-                                  inicioOutro + (outroEvento.duracao || 60);
+                              const intervaloAtual = intervalos[i];
+                              const grupoIntervalos = [intervaloAtual];
 
-                                // Verifica se há sobreposição: início1 < fim2 && início2 < fim1
-                                if (
-                                  inicioEvento < fimOutro &&
-                                  inicioOutro < fimEvento
-                                ) {
-                                  eventosSimultaneosGrupo.push(outroEvento);
-                                  eventosProcessados.add(outroEvento._id);
+                              // Encontrar todos os intervalos que se sobrepõem
+                              for (let j = i + 1; j < intervalos.length; j++) {
+                                if (intervalos[j].processado) continue;
+
+                                const outroIntervalo = intervalos[j];
+
+                                // Verificar se há sobreposição com qualquer evento já no grupo
+                                const temSobreposicao = grupoIntervalos.some(
+                                  (eventoGrupo) =>
+                                    eventoGrupo.inicio < outroIntervalo.fim &&
+                                    outroIntervalo.inicio < eventoGrupo.fim
+                                );
+
+                                if (temSobreposicao) {
+                                  grupoIntervalos.push(outroIntervalo);
+                                  intervalos[j].processado = true;
                                 }
-                              });
+                              }
 
-                              // Ordenar por prioridade (eventos menores primeiro para evitar sobreposição)
-                              eventosSimultaneosGrupo.sort((a, b) => {
-                                // Primeiro, ordenar por duração (eventos mais curtos primeiro)
-                                const duracaoA = a.duracao || 60;
-                                const duracaoB = b.duracao || 60;
-                                if (duracaoA !== duracaoB) {
-                                  return duracaoA - duracaoB;
-                                }
+                              // Marcar o evento atual como processado
+                              intervalos[i].processado = true;
 
-                                // Se durações iguais, Palestra Principal tem prioridade
-                                if (
-                                  a.tipoEvento === "Palestra Principal" &&
-                                  b.tipoEvento !== "Palestra Principal"
-                                )
-                                  return -1;
-                                if (
-                                  b.tipoEvento === "Palestra Principal" &&
-                                  a.tipoEvento !== "Palestra Principal"
-                                )
-                                  return 1;
+                              // Ordenar eventos do grupo (menores primeiro para evitar sobreposição visual)
+                              const eventosGrupo = grupoIntervalos
+                                .map((int) => int.evento)
+                                .sort((a, b) => {
+                                  const duracaoA = a.duracao || 60;
+                                  const duracaoB = b.duracao || 60;
 
-                                // Por último, ordenar por horário
-                                return a.hora.getTime() - b.hora.getTime();
-                              });
+                                  // Eventos mais curtos primeiro
+                                  if (duracaoA !== duracaoB) {
+                                    return duracaoA - duracaoB;
+                                  }
 
-                              // Usar o evento com menor horário de início como chave
-                              const eventoBase = eventosSimultaneosGrupo[0];
-                              // Obter horas e minutos diretamente
+                                  // Palestra Principal tem prioridade
+                                  if (
+                                    a.tipoEvento === "Palestra Principal" &&
+                                    b.tipoEvento !== "Palestra Principal"
+                                  )
+                                    return -1;
+                                  if (
+                                    b.tipoEvento === "Palestra Principal" &&
+                                    a.tipoEvento !== "Palestra Principal"
+                                  )
+                                    return 1;
+
+                                  return a.hora.getTime() - b.hora.getTime();
+                                });
+
+                              // Usar o primeiro evento como base para a chave
+                              const eventoBase = eventosGrupo[0];
                               const horaBase = eventoBase.hora.getHours();
                               const minutoBase = eventoBase.hora.getMinutes();
                               const horarioBase = `${horaBase}:${minutoBase
                                 .toString()
                                 .padStart(2, "0")}`;
-                              const key = `${dia}-${horarioBase}`;
 
-                              if (!eventosSimultaneos.has(key)) {
-                                eventosSimultaneos.set(key, {
-                                  dia,
-                                  horario: horarioBase,
-                                  eventos: eventosSimultaneosGrupo,
-                                  colIndex,
-                                });
-                              }
+                              const key = `${dia}-${horarioBase}-${eventosGrupo.length}`;
 
-                              eventosSimultaneosGrupo.forEach((e) => {
-                                eventosRenderizados.add(e._id);
-                                eventosProcessados.add(e._id);
+                              eventosSimultaneos.set(key, {
+                                dia,
+                                horario: horarioBase,
+                                eventos: eventosGrupo,
+                                colIndex,
                               });
-                            });
-                          });
 
+                              // Marcar todos como renderizados
+                              eventosGrupo.forEach((e) => {
+                                eventosRenderizados.add(e._id);
+                              });
+                            }
+                          });
                           return Array.from(eventosSimultaneos.values()).map(
                             ({
                               dia,
@@ -854,14 +865,14 @@ const Cronograma = () => {
                               return (
                                 <div
                                   key={`simult-${dia}-${horario}`}
-                                  className="eventos-simultaneos-container"
+                                  className={`eventos-simultaneos-container eventos-${eventosGrupo.length}`}
                                   style={{
                                     gridColumn: colIndex + 2,
                                     gridRow: `${
                                       startRowIndex + 1
                                     } / span ${slotsVisuaisContainer}`,
                                     display: "flex",
-                                    gap: "2px",
+                                    gap: "3px",
                                     height: "100%",
                                     position: "relative",
                                     zIndex: 1,
@@ -872,9 +883,11 @@ const Cronograma = () => {
                                       calcularSlotsOcupados(evento);
                                     const duracaoEvento = evento.duracao || 60;
 
-                                    // Calcular altura proporcional baseada na duração do evento vs duração máxima
-                                    const alturaProporcia =
-                                      (duracaoEvento / duracaoMaxima) * 100;
+                                    // Calcular altura proporcional, mas garantir altura mínima para legibilidade
+                                    const alturaProporcia = Math.max(
+                                      (duracaoEvento / duracaoMaxima) * 100,
+                                      60 // Altura mínima de 60% para garantir legibilidade
+                                    );
 
                                     return (
                                       <div
@@ -898,6 +911,12 @@ const Cronograma = () => {
                                           flex: 1,
                                           height: `${alturaProporcia}%`,
                                           alignSelf: "flex-start",
+                                          minHeight: "60px", // Altura mínima para legibilidade
+                                          maxHeight: "100%", // Não ultrapassar o container
+                                          position: "relative",
+                                          zIndex:
+                                            eventosGrupo.length -
+                                            eventosGrupo.indexOf(evento), // Z-index baseado na posição
                                         }}
                                       >
                                         <div
