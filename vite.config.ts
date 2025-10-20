@@ -17,19 +17,13 @@ export default defineConfig({
   build: {
     outDir: "dist",
     sourcemap: false,
-    minify: "terser",
+    minify: "esbuild", // Usar esbuild em vez de terser (mais rápido e não precisa de dependência extra)
     target: "esnext",
     rollupOptions: {
       output: {
         manualChunks: {
           vendor: ["react", "react-dom"],
         },
-      },
-    },
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true,
       },
     },
   },
