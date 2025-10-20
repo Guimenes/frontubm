@@ -771,8 +771,16 @@ const Cronograma = () => {
                                 }
                               });
 
-                              // Ordenar por prioridade (Palestra Principal primeiro)
+                              // Ordenar por prioridade (eventos menores primeiro para evitar sobreposição)
                               eventosSimultaneosGrupo.sort((a, b) => {
+                                // Primeiro, ordenar por duração (eventos mais curtos primeiro)
+                                const duracaoA = a.duracao || 60;
+                                const duracaoB = b.duracao || 60;
+                                if (duracaoA !== duracaoB) {
+                                  return duracaoA - duracaoB;
+                                }
+
+                                // Se durações iguais, Palestra Principal tem prioridade
                                 if (
                                   a.tipoEvento === "Palestra Principal" &&
                                   b.tipoEvento !== "Palestra Principal"
@@ -783,6 +791,8 @@ const Cronograma = () => {
                                   a.tipoEvento !== "Palestra Principal"
                                 )
                                   return 1;
+
+                                // Por último, ordenar por horário
                                 return a.hora.getTime() - b.hora.getTime();
                               });
 
@@ -853,6 +863,8 @@ const Cronograma = () => {
                                     display: "flex",
                                     gap: "2px",
                                     height: "100%",
+                                    position: "relative",
+                                    zIndex: 1,
                                   }}
                                 >
                                   {eventosGrupo.map((evento: Evento) => {

@@ -471,78 +471,121 @@
   container-type: inline-size; /* Container queries support */
 }
 
-/* Cards compactos para grades menores */
+/* Cards responsivos baseados na largura do container */
 @container (max-width: 1200px) {
   .evento-grade-tema {
-    font-size: 0.75rem;
+    font-size: 0.8rem !important;
     -webkit-line-clamp: 2;
     line-clamp: 2;
   }
 
   .evento-grade-local,
   .evento-grade-palestrante {
-    font-size: 0.65rem;
+    font-size: 0.7rem !important;
   }
 
   .evento-curso {
-    font-size: 0.6rem;
+    font-size: 0.65rem !important;
     padding: 2px 6px;
   }
 
   .evento-codigo {
-    font-size: 0.6rem;
+    font-size: 0.65rem !important;
   }
 
   .evento-grade-duracao {
-    font-size: 0.6rem;
+    font-size: 0.65rem !important;
   }
 }
 
 @container (max-width: 900px) {
   .evento-grade {
-    padding: 8px;
+    padding: 8px !important;
   }
 
   .evento-grade-tema {
-    font-size: 0.7rem;
+    font-size: 0.75rem !important;
     -webkit-line-clamp: 1;
     line-clamp: 1;
   }
 
   .evento-grade-local,
   .evento-grade-palestrante {
-    font-size: 0.6rem;
+    font-size: 0.65rem !important;
   }
 
   .evento-grade-palestrante {
-    display: none; /* Esconde palestrante em cards muito pequenos */
+    display: none !important; /* Esconde palestrante em cards muito pequenos */
   }
 
   .evento-curso {
-    font-size: 0.55rem;
+    font-size: 0.6rem !important;
     padding: 1px 4px;
   }
 
   .evento-codigo {
-    font-size: 0.55rem;
+    font-size: 0.6rem !important;
+  }
+}
+
+@container (max-width: 600px) {
+  .evento-grade {
+    padding: 6px !important;
+  }
+
+  .evento-grade-tema {
+    font-size: 0.7rem !important;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    margin-bottom: 3px;
+  }
+
+  .evento-grade-local {
+    font-size: 0.6rem !important;
+  }
+
+  .evento-curso {
+    font-size: 0.55rem !important;
+    padding: 1px 3px;
+  }
+
+  .evento-codigo {
+    font-size: 0.55rem !important;
+  }
+
+  .evento-grade-tipo {
+    font-size: 0.5rem !important;
+    padding: 1px 2px;
   }
 }
 
 /* Fallback para navegadores sem container queries */
 @media (max-width: 1200px) {
   .grade-container .evento-grade-tema {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
   }
 
   .grade-container .evento-grade-local,
   .grade-container .evento-grade-palestrante {
-    font-size: 0.65rem;
+    font-size: 0.7rem;
   }
 }
 
 @media (max-width: 900px) {
   .grade-container .evento-grade {
     padding: 8px;
+  }
+
+  .grade-container .evento-grade-tema {
+    font-size: 0.75rem;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+  }
+}
+
+@media (max-width: 600px) {
+  .grade-container .evento-grade {
+    padding: 6px;
   }
 
   .grade-container .evento-grade-tema {
@@ -625,7 +668,7 @@
   flex-direction: row;
   gap: 2px;
   position: relative;
-  overflow: hidden;
+  overflow: visible; /* Mudança para permitir que cards pequenos sejam visíveis */
   align-items: stretch;
   box-sizing: border-box;
 }
@@ -646,6 +689,21 @@
 .evento-simultaneo {
   flex: 1;
   margin: 0 !important;
+  position: relative;
+  z-index: 2; /* Garante que eventos menores fiquem visíveis */
+}
+
+/* Eventos mais curtos ficam por cima */
+.evento-simultaneo.card-curto {
+  z-index: 4;
+}
+
+.evento-simultaneo.card-compacto {
+  z-index: 3;
+}
+
+.evento-simultaneo.card-longo {
+  z-index: 1;
 }
 
 .evento-grade::before {
@@ -885,33 +943,49 @@
   font-size: 0.75rem;
 }
 
-/* Eventos simultâneos - estilo Teams */
+/* Eventos simultâneos - estilo melhorado para evitar sobreposição */
 .evento-simultaneo {
   padding: 8px;
-  border-radius: 4px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
   min-width: 0;
   box-sizing: border-box;
   height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  position: relative;
+  overflow: visible; /* Permite que o conteúdo seja visível */
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Garantir que eventos menores sejam sempre visíveis */
+.evento-simultaneo:hover {
+  z-index: 10 !important;
+  transform: scale(1.02);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
 }
 
 .evento-simultaneo .evento-grade-tema {
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   font-weight: 600;
   -webkit-line-clamp: 2;
   line-clamp: 2;
   margin-bottom: 4px;
   overflow: hidden;
   text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  line-height: 1.2;
 }
 
 .evento-simultaneo .evento-grade-info {
   margin-bottom: 4px;
-  gap: 2px;
+  gap: 3px;
   flex: 1;
+  min-height: 0;
 }
 
 .evento-simultaneo .evento-grade-local,
@@ -920,6 +994,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  line-height: 1.2;
 }
 
 .evento-simultaneo .evento-grade-duracao {
@@ -935,9 +1010,10 @@
   right: auto;
   margin-top: auto;
   align-self: flex-end;
+  border-radius: 3px;
 }
 
-/* Melhorias visuais gerais */
+/* Melhorias visuais gerais para legibilidade */
 .evento-grade-local span,
 .evento-grade-palestrante span,
 .evento-grade-duracao span {
@@ -948,6 +1024,17 @@
 
 .evento-grade-info {
   min-height: 0; /* Permite flexbox collapse */
+  overflow: visible; /* Garante que o conteúdo seja visível */
+}
+
+/* Garantir contraste adequado em todos os tamanhos */
+.evento-grade-tema {
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+  font-weight: 600;
+}
+
+.evento-simultaneo .evento-grade-tema {
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.9);
 }
 
 /* Indicador de "mais informações" para cards compactos */
@@ -961,6 +1048,7 @@
   color: var(--primary-color);
   opacity: 0.6;
   font-weight: bold;
+  z-index: 2;
 }
 
 /* Melhoria no posicionamento do tipo quando há indicador */
@@ -970,6 +1058,7 @@
   right: 4px;
   font-size: 0.55rem;
   padding: 1px 3px;
+  z-index: 3;
 }
 
 .evento-vazio {
@@ -1353,44 +1442,43 @@
     font-size: 0.7rem;
   }
 
-  .eventos-simultaneos {
-    gap: 2px;
-    flex-wrap: wrap;
+  .eventos-simultaneos-container {
+    gap: 1px;
+    overflow: visible;
   }
 
   .evento-simultaneo {
-    padding: 4px 6px;
+    padding: 6px;
     min-width: 0;
     flex: 1;
+    border-radius: 4px;
   }
 
   .evento-simultaneo .evento-grade-tema {
-    font-size: 0.65rem;
+    font-size: 0.7rem;
     -webkit-line-clamp: 1;
     line-clamp: 1;
-    margin-bottom: 2px;
+    margin-bottom: 3px;
   }
 
   .evento-simultaneo .evento-grade-info {
-    margin-bottom: 2px;
-    gap: 1px;
+    margin-bottom: 3px;
+    gap: 2px;
   }
 
   .evento-simultaneo .evento-grade-local,
   .evento-simultaneo .evento-grade-palestrante {
-    font-size: 0.6rem;
+    font-size: 0.65rem;
   }
 
   .evento-simultaneo .evento-grade-duracao {
-    font-size: 0.55rem;
-    margin-bottom: 1px;
+    font-size: 0.6rem;
+    margin-bottom: 2px;
   }
 
   .evento-simultaneo .evento-grade-tipo {
-    font-size: 0.5rem;
-    padding: 1px 2px;
-    bottom: 3px;
-    right: 3px;
+    font-size: 0.55rem;
+    padding: 1px 3px;
   }
 
   .evento-simultaneo .evento-grade-palestrante {
@@ -1563,23 +1651,38 @@
   }
 
   /* Para eventos simultâneos em telas pequenas */
-  .eventos-simultaneos {
-    flex-direction: column; /* Volta para coluna em telas muito pequenas */
+  .eventos-simultaneos-container {
+    flex-direction: row; /* Mantém em linha em smartphones */
     gap: 1px;
+    overflow: visible;
   }
 
   .evento-simultaneo {
-    padding: 3px 4px;
+    padding: 4px;
+    border-radius: 3px;
+    min-width: 0;
+    flex: 1;
   }
 
   .evento-simultaneo .evento-grade-tema {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     -webkit-line-clamp: 2;
     line-clamp: 2;
+    margin-bottom: 2px;
+    line-height: 1.1;
   }
 
   .evento-simultaneo .evento-grade-local {
-    font-size: 0.65rem;
+    font-size: 0.6rem;
+  }
+
+  .evento-simultaneo .evento-grade-palestrante {
+    display: none; /* Remove palestrante em telas muito pequenas */
+  }
+
+  .evento-simultaneo .evento-grade-tipo {
+    font-size: 0.5rem;
+    padding: 1px 2px;
   }
   .mobile-evento-card {
     margin-bottom: 12px;
