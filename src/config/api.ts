@@ -8,8 +8,8 @@ const getApiBaseUrl = () => {
     return "http://localhost:5000/api";
   }
 
-  // Para produção, usar o domínio personalizado com proxy do Nginx
-  return "https://seminario.ubm.br/api";
+  // Para produção, usar o servidor hstgr.cloud
+  return "https://srv950964.hstgr.cloud/api";
 };
 
 export const API_BASE_URL = getApiBaseUrl();
